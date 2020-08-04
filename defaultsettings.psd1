@@ -1,0 +1,3 @@
+@{
+    OutputDirectory = ".\dist"
+}
