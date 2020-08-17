@@ -16,20 +16,49 @@
 
     ###
     # OPTIONAL - Module output directory
-    # DEFAULT IS $OutputDirectory\$ModuleName
+    # DEFAULT IS $OutputDirectory\$BuildTarget\$ModuleName
     #ModuleOutputDirectory = ''
+
+    ###
+    # OPTIONAL - Default Build Target
+    # DEFAULT IS Release
+    #DefaultBuildTarget = 'Release'
 
     ##
     # REQUIRED - Script to build the module 
     ##
     Build = {
-        Collate {
-            # List of files to combine into the PSM1 file during build
-            Get-ChildItem .\functions\ -Recurse -File
-        }
 
         CopyFiles {
             # List of files to copy to the ModuleOutputPath
+            "%%MODULENAME%%.psd1"
+        }
+
+        Debug {
+            # Debug Build Target
+            # Only executed when using 'make build debug'
+
+            CopyDirectory {
+               'functions'
+            }
+
+            CopyFiles {
+                '%%MODULENAME%%.psm1'
+            }
+        }
+
+        Release {
+            # Release Build Target (Default)
+            # Only executed when targeting release (which is default)
+            Collate {
+                Get-ChildItem .\functions -Recurse -File
+            }
+
+            CodeSign {
+                '%%MODULENAME%%.psd1'
+                '%%MODULENAME%%.psm1'
+            }
+
         }
     }
 
@@ -45,8 +74,8 @@
     ##
     Publish = {
         import-module moduleupdater -force
-        Set-LocalRepository $settings.OutputDirectory
-        if(Get-RemoteModule | where { $_.Name -eq $settings.ModuleName }) {
+        Set-LocalRepository $settings.BuildTargetPath
+        if(Get-RemoteModule | Where-Object { $_.Name -eq $settings.ModuleName }) {
             Publish-LocalModuleUpdate $settings.ModuleName
         } else {
             Publish-LocalModule $settings.ModuleName

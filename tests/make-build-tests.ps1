@@ -39,11 +39,11 @@ Describe 'Make-Build' {
     Context 'Without build.psd1' {
         BeforeAll {
             Push-Location TestDrive:\
-            if((test-path TestDrive:\build.psd1)) { rm TestDrive:\build.psd1 }
+            if((test-path TestDrive:\build.psd1)) { Remove-Item TestDrive:\build.psd1 }
         }
 
         It "Should throw an exception" {
-             { $output = Invoke-Build } | Should -Throw "No build.psd1 file found!"
+             { Invoke-Build } | Should -Throw "No build.psd1 file found!"
         }
         
         AfterAll {

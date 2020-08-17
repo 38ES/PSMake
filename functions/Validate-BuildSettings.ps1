@@ -1,4 +1,6 @@
+
 function Validate-BuildSettings {
+    
     param(
         [hashtable]$Settings
     )
@@ -14,4 +16,10 @@ function Validate-BuildSettings {
     # Check for Build scriptblock
     if(-not $Settings.ContainsKey("Clean")) { throw "Required Property 'Clean' is not defined" }
     if(-not $Settings["Clean"] -is [scriptblock]) { throw "Property Clean is not a scriptblock! ($($Settings.Clean))" }
+
+    # Check if Valid BuildTarget
+    if(-not $Settings.ContainsKey("BuildTarget")) { throw "Required Property 'BuildTarget' is not defined" }
+    if(-not $Settings["BuildTarget"] -is [string]) { throw "Property 'BuildTarget' not a string! ($($Settings.BuildTarget))" }
+    if(-not @("Release", "Debug") -contains $Settings["BuildTarget"]) { throw "Property 'BuildTarget' is not a valid build target (Release, Debug)! ($($Settings.BuildTarget))" }
+    
 }

@@ -1,25 +1,24 @@
-using namespace System.IO
+using namespace System.IO;
 
-function CopyFiles {
-    param(
-        [scriptblock]$ScriptBlock,
+function CopyDirectory {
+    Param(
+        [ScriptBlock]$ScriptBlock,
         [string]$To = $settings.OutputModulePath
     )
-    
+
     if($To -ne $settings.OutputModulePath) { 
         $To = (Resolve-Path (Join-Path $settings.OutputModulePath $To)).Path
     }
 
     & $ScriptBlock | ForEach-Object {
         if($_ -is [string]) {
-            Get-ChildItem $_
-        } elseif($_ -is [FileInfo]) {
+            [DirectoryInfo]::new($_)
+        } elseif($_ -is [DirectoryInfo]) {
             $_
         } else {
-            throw "Unexpected item to copy - '$_'"
+            throw "Unexpected directory to copy - '$_'"
         }
     } | ForEach-Object {
-        Copy-Item $_.FullName $To
+        Copy-Item $_.FullName $To -Recurse
     }
-    
 }
