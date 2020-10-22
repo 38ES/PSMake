@@ -7,7 +7,7 @@ function Validate-BuildSettings {
 
     # Check for module name
     if(-not $Settings.ContainsKey("ModuleName")) { throw "Required Property 'ModuleName' is not defined." }
-    if(-not ($Settings["ModuleName"] -match "^[a-zA-Z][a-zA-Z0-9]*$")) { throw "Property 'ModuleName' ($($Settings["ModuleName"])) is invalid." }
+    if(-not ($Settings["ModuleName"] -match "^[a-zA-Z][a-zA-Z0-9-_]*$")) { throw "Property 'ModuleName' ($($Settings["ModuleName"])) is invalid." }
 
     # Check for Build scriptblock
     if(-not $Settings.ContainsKey("Build")) { throw "Required Property 'Build' is not defined" }
