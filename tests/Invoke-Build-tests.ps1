@@ -3,24 +3,24 @@ InModuleScope 'make' {
         Context 'With build.psd1 and calling build (no other arguments)' {
             Push-Location TestDrive:\
 
-            $workingDirectory = ''
-            $buildCalled = 0
-            $cleanCalled = 0
-            $publishCalled = 0
+            $script:workingDirectory = ''
+            $script:buildCalled = 0
+            $script:cleanCalled = 0
+            $script:publishCalled = 0
             $build = @{
                 ModuleName = 'test'
                 OutputDirectory = "dist"
                 OutputModulePath = "dist\test"
                 DefaultBuildTarget = "release"
                 Build = {{
-                    $workingDirectory = $PWD.Path
-                    $buildCalled++
+                    $script:workingDirectory = $PWD.Path
+                    $script:buildCalled++
                 }}
                 Clean = {{
-                    $cleanCalled++
+                    $script:cleanCalled++
                 }}
                 Publish = {{
-                    $publishCalled++
+                    $script:publishCalled++
                 }}
             }
 
@@ -48,7 +48,7 @@ InModuleScope 'make' {
             }
 
             It "Should call Get-BuildSettings once" {
-                Assert-MockCalled 'Get-BuildSettings' -Times 2
+                Assert-MockCalled 'Get-BuildSettings' -Times 1
             }
 
             It "Should not call 'Clean'" {

@@ -1,4 +1,4 @@
-function Collate {
+function AddType {
     param(
         [scriptblock]$Scriptblock,
         [string]$OutputDirectory = $settings.OutputDirectory,
@@ -16,9 +16,9 @@ function Collate {
         $scriptblockText = $content
         if($Base64Encode) {
             $encodedScriptblock = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($scriptblockText))
-            ". ([scriptblock]::Create([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('$encodedScriptblock'))))"
+            "Add-Type -TypeDefinition ([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('$encodedScriptblock')))"
         } else {
-            ". ([scriptblock]::Create(@'`r`n$scriptblockText`r`n'@))`r`n"
+            "Add-Type -TypeDefinition @'`r`n$scriptblockText`r`n'@`r`n"
         }
         
     }
