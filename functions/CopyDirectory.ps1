@@ -6,19 +6,24 @@ function CopyDirectory {
         [string]$To = $settings.OutputModulePath
     )
 
-    if($To -ne $settings.OutputModulePath) { 
-        $To = (Resolve-Path (Join-Path $settings.OutputModulePath $To)).Path
+    if($To -ne $settings.OutputModulePath -and -not (Split-Path $To -IsAbsolute)) { 
+        $To = Join-Path $settings.OutputModulePath $To
     }
 
     & $ScriptBlock | ForEach-Object {
         if($_ -is [string]) {
-            [DirectoryInfo]::new($_)
+            if(Split-Path $_ -IsAbsolute) {
+                $_
+            } else {
+                (Join-Path $PWD.Path $_)
+            }
+            
         } elseif($_ -is [DirectoryInfo]) {
-            $_
+            $_.FullName
         } else {
             throw "Unexpected directory to copy - '$_'"
         }
     } | ForEach-Object {
-        Copy-Item $_.FullName $To -Recurse
+        Copy-Item $_ $To -Recurse
     }
 }
