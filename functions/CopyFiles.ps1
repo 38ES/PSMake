@@ -6,8 +6,8 @@ function CopyFiles {
         [string]$To = $settings.OutputModulePath
     )
     
-    if($To -ne $settings.OutputModulePath) { 
-        $To = (Resolve-Path (Join-Path $settings.OutputModulePath $To)).Path
+    if($To -ne $settings.OutputModulePath -and -not (Split-Path $To -IsAbsolute)) { 
+        $To = Join-Path $settings.OutputModulePath $To
     }
 
     & $ScriptBlock | ForEach-Object {
