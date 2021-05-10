@@ -16,7 +16,7 @@ try {
     import-module $PSScriptRoot\..\make.psd1
     make clean
     make
-    Publish-Module -Path ./dist/Release/make -NuGetApiKey $NuGetAPIKey -Repository Di2e
+    Publish-Module -Path ./dist/Release/make -NuGetApiKey $NuGetAPIKey -Repository Di2e -ErrorAction Stop
 } catch {
     Write-Error $_
     exit 1
