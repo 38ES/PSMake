@@ -12,7 +12,7 @@ try {
         -Credential $cred `
         -InstallationPolicy Trusted `
         -ErrorAction Stop `
-        -WarningAction -Stop
+        -WarningAction Stop
 
     make clean
     make
