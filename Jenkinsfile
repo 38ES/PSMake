@@ -51,6 +51,7 @@ pipeline {
                 CRED = credentials("CEIG-CI")
             }
             steps {
+                pwsh 'get-childitem Env:/'
                 pwsh './jenkins-pipeline/CreatePublishNuGetPackage.ps1 -NuGetAPIKey $NuGetAPIKey -Username $CRED_USR -Password (ConvertTo-SecureString $CRED_PSW -AsPlainText -Force)'
             }
         }
