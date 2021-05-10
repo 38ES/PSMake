@@ -19,7 +19,12 @@ function Invoke-Build {
             'Get-ChildItem $PSScriptRoot\functions\ -File -Recurse | ForEach-Object { . $_.FullName }' | Out-File ".\$("$ModuleName\$ModuleName").psm1" -Encoding UTF8
             $dom = $env:userdomain
             $usr = $env:username
-            $author = ([adsi]"WinNT://$dom/$usr,user").fullname.ToString()
+            try {
+                $author = ([adsi]"WinNT://$dom/$usr,user").fullname.ToString()
+            } catch {
+                $author = "$usr$(if($dom) { "@$dom" })"
+            }
+            
             if(-not (test-path ".\$ModuleName\$ModuleName.psd1" -PathType Leaf)) { New-ModuleManifest -Path ".\$ModuleName\$ModuleName.psd1" -CompanyName "USAF, 38 CEIG/ES" -Copyright "GOTS" -RootModule "$ModuleName.psm1" -ModuleVersion "1.0.0.0" -Author $author }
             (Get-Content "$($MyInvocation.MyCommand.Module.ModuleBase)\template.psd1").Replace("%%MODULENAME%%", $ModuleName) | Out-File ".\$ModuleName\build.psd1"
         }
@@ -38,7 +43,7 @@ function Invoke-Build {
 
         {$_ -in "", "build","clean","test","publish" } {
             if(-not $buildData.ContainsKey($Command)) { throw "Unable to run '$Command' due to build.psd1 not containing a '$Command' scriptblock" }
-            (& $buildData[$Command]).InvokeWithContext($null, [PSVariable]::new('settings', $settings), $null)
+            (& $buildData[$Command]).InvokeWithContext($null, [PSVariable]::new('settings', $settings), $Remaining)
         }
 
         default {

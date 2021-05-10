@@ -1,3 +1,6 @@
 dist/*
 src/**/bin
 src/**/obj
+**/PesterTestsReport.xml
+**/report.xml
+**/CodeCoverageReport.xml

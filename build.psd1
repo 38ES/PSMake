@@ -14,10 +14,12 @@
                 Get-ChildItem .\functions -Recurse -File
             }
 
-            CodeSign {
-                'make.psd1'
-                'make.psm1'
-            }
+            # Removed due to code-signing requiring Smart-Card - need a soft-cert to work within Jenkins CI/CD
+            # CEIG-39
+            #CodeSign {
+            #    'make.psd1'
+            #    'make.psm1'
+            #}
         }
 
         Debug {
@@ -36,18 +38,17 @@
         if(test-path $settings.OutputDirectory) { remove-item $settings.OutputDirectory -Recurse }
     }
     Publish = {
-        import-module moduleupdater -force
-        Set-LocalRepository $settings.BuildTargetPath
-        if(Get-RemoteModule | Where-Object { $_.Name -eq $settings.ModuleName }) {
-            Publish-LocalModuleUpdate $settings.ModuleName
-        } else {
-            Publish-LocalModule $settings.ModuleName
-        }
-        Reset-LocalRepository
+        param(
+            [string]$NuGetAPIKey
+        )
+        import-module PowerShellGet -MinimumVersion 2.2.5
+        Publish-Module -Path ./dist/Release/make -Repository Di2e -NuGetApiKey $NuGetAPIKey
     }
     Test = {
         #import-module .\make.psd1 -force
         $testFiles = Get-ChildItem .\tests -Recurse -File
-        Invoke-Pester $testFiles.FullName
+        Invoke-Pester $testFiles.FullName `
+            -OutputFile ./PesterTestsReport.xml -OutputFormat NUnitXml `
+            -CodeCoverageOutputFile ./CodeCoverageReport.xml -CodeCoverageOutputFileFormat JaCoCo -CodeCoverage (Get-ChildItem ./functions/* -File -Recurse).FullName
     }
 }

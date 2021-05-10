@@ -40,7 +40,7 @@ InModuleScope 'make' {
             }
 
             It "Should set the current work directory to the current work directory before the call" {
-                $workingDirectory | Should -Be "TestDrive:\"
+                $workingDirectory | Should -Be "TestDrive:$([System.IO.Path]::DirectorySeparatorChar)"
             }
 
             It "Should call test-path twice" {
