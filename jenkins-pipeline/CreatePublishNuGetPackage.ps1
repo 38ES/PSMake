@@ -13,7 +13,7 @@ try {
         -InstallationPolicy Trusted `
         -ErrorAction Stop `
         -WarningAction Stop
-
+    import-module $PSScriptRoot\..\make.psd1
     make clean
     make
     Publish-Module -Path ./dist/Release/make -NuGetApiKey $NuGetAPIKey -Repository Di2e
