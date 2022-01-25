@@ -41,9 +41,20 @@
         param(
             [string]$NuGetAPIKey
         )
-        import-module PowerShellGet -MinimumVersion 2.2.5
-        Publish-Module -Path ./dist/Release/make -Repository Di2e -NuGetApiKey $NuGetAPIKey
+
+        $args1 = @{
+            Path = $settings.OutputModulePath
+            Repository = 'Di2e'
+        }
+
+        if($PSBoundParameters.ContainsKey('NuGetApiKey')) {
+            $args1.Add('NuGetApiKey', $NuGetAPIKey)
+        }
+
+        import-module PowerShellGet -RequiredVersion 2.2.5
+        Publish-Module @args1
     }
+    
     Test = {
         #import-module .\make.psd1 -force
         $testFiles = Get-ChildItem .\tests -Recurse -File

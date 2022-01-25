@@ -66,30 +66,60 @@
     # REQUIRED - Script to clean (remove) all the build files and folders
     ##
     Clean = {
-        Remove-Item $settings.OutputDirectory -Recurse
+        if ((Test-Path $settings.OutputDirectory)) {
+            Remove-Item $settings.OutputDirectory -Recurse
+        }
     }
 
     ##
     # REQUIRED - Script to publish the built script
     ##
     Publish = {
-        import-module moduleupdater -force
-        Set-LocalRepository $settings.BuildTargetPath
-        if(Get-RemoteModule | Where-Object { $_.Name -eq $settings.ModuleName }) {
-            Publish-LocalModuleUpdate $settings.ModuleName
-        } else {
-            Publish-LocalModule $settings.ModuleName
+        param(
+            [string]$NuGetAPIKey
+        )
+
+        $args1 = @{
+            Path = $settings.OutputModulePath
+            Repository = 'Di2e'
         }
-        Reset-LocalRepository
+
+        if($PSBoundParameters.ContainsKey('NuGetApiKey')) {
+            $args1.Add('NuGetApiKey', $NuGetAPIKey)
+        }
+
+        import-module PowerShellGet -RequiredVersion 2.2.5
+        Publish-Module @args1
     }
 
     ##
     # REQUIRED - Script to run the unit tests for the module
     ##
     Test = {
-        import-module ".\$($settings.ModuleName).psd1" -force
-        $testFiles = Get-ChildItem .\tests -Recurse -File
-        Invoke-Pester $testFiles.FullName
+        param(
+            [Parameter(Position=0)]
+            [string]$Target
+        )
+
+        if ($PSBoundParameters.ContainsKey("Target") -and $Target -eq "reports") {
+            Write-Information "Writing Test Reports!"
+        }
+        
+        $testFiles = Get-ChildItem .\tests -Recurse -File -Filter *Tests.ps1
+        $pesterArgs = @{
+            Script = $testFiles.FullName
+        }
+        if ($Target -eq "reports") {
+            $pesterArgs.Add('OutputFile', './PesterTestsReport.xml')
+            $pesterArgs.Add('OutputFormat', 'NUnitXml')
+            $pesterArgs.Add('CodeCoverageOutputFile', './CodeCoverageReport.xml')
+            $pesterArgs.Add('CodeCoverageOutputFileFormat', 'JaCoCo')
+            $pesterArgs.Add('CodeCoverage', (Get-ChildItem ./functions/* -File -Recurse).FullName)
+
+        }
+        
+        import-module ".\$($settings.ModuleName).psd1" -force -ErrorAction Stop
+        Invoke-Pester @pesterArgs
     }
 
 }
