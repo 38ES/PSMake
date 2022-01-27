@@ -9,7 +9,7 @@ param(
 
 try {
     $cred = [pscredential]::new($Username, $Password)
-    Register-PackageSource -Name $Name -Credential $cred -Location $SourceLocation -ProviderName NuGet
+    Register-PackageSource -Name $Name -Credential $cred -Location $SourceLocation -ProviderName NuGet | Out-Null
     Register-PSRepository $Name `
         -SourceLocation $SourceLocation `
         -PublishLocation $PublishLocation `
