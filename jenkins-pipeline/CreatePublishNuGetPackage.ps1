@@ -1,4 +1,5 @@
 param(
+    [string]$Name = "Di2e",
     [string]$SourceLocation = 'https://nexus.di2e.net/nexus3/repository/Private_CEIG_NuGet/',
     [string]$PublishLocation = 'https://nexus.di2e.net/nexus3/repository/Private_CEIG_NuGet/',
     [string]$NuGetAPIKey,
@@ -8,7 +9,8 @@ param(
 
 try {
     $cred = [pscredential]::new($Username, $Password)
-    Register-PSRepository Di2e `
+    Register-PackageSource -Name $Name -Credential $cred -Location $SourceLocation -ProviderName NuGet
+    Register-PSRepository $Name `
         -SourceLocation $SourceLocation `
         -PublishLocation $PublishLocation `
         -Credential $cred `
@@ -18,7 +20,7 @@ try {
     import-module $PSScriptRoot\..\make.psd1
     make clean
     make
-    Publish-Module -Path ./dist/Release/make -NuGetApiKey $NuGetAPIKey -Repository Di2e -ErrorAction Stop
+    Publish-Module -Path ./dist/Release/make -NuGetApiKey $NuGetAPIKey -Repository $Name -ErrorAction Stop
 } catch {
     Write-Error $_
     exit 1
