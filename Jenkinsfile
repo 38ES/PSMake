@@ -39,7 +39,7 @@ pipeline {
         stage("Test Project") {
             steps {
                 pwsh "./jenkins-pipeline/TestProject.ps1"
-                nunit testResultsPattern: 'PesterTestsReport.xml'
+                junit testResultsPattern: 'PesterTestsReport.xml'
                 publishCoverage adapters: [jacocoAdapter('CodeCoverageReport.xml')]
             }
         }

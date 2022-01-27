@@ -59,7 +59,7 @@
         #import-module .\make.psd1 -force
         $testFiles = Get-ChildItem .\tests -Recurse -File
         Invoke-Pester $testFiles.FullName `
-            -OutputFile ./PesterTestsReport.xml -OutputFormat NUnitXml `
+            -OutputFile ./PesterTestsReport.xml -OutputFormat JUnitXml `
             -CodeCoverageOutputFile ./CodeCoverageReport.xml -CodeCoverageOutputFileFormat JaCoCo -CodeCoverage (Get-ChildItem ./functions/* -File -Recurse).FullName
     }
 }

@@ -1,0 +1,60 @@
+image: registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image/docker-ceig-development-image:v2.2
+
+stages:
+- environment
+- build
+- test
+- publish
+
+Output Environment:
+  stage: environment
+  script:
+    - which pwsh
+    - env
+    - ls $PS_INSTALL_FOLDER
+    - $PSVersionTable
+    - gci Env:/
+    - gci
+
+Build Project -- Debug:
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_REF_NAME != "release"'
+  script:
+    - ./jenkins-pipeline/BuildProjectDebug.ps1
+  artifacts:
+    paths:
+      - ./dist
+
+Build Project -- Release:
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "release"'
+  script:
+    - ./jenkins-pipeline/BuildProjectRelease.ps1
+  artifacts:
+    paths:
+      - ./dist
+
+Test Project:
+  stage: test
+  script:
+    - ./jenkins-pipeline/TestProject.ps1
+  after_script:
+    - python3 ./jenkins-pipeline/cover2cover.py report.xml ./functions > cobertura-coverage.xml
+  artifacts:
+    when: always
+    paths:
+      - PesterTestsReport.xml
+      - report.xml
+      - cobertura-coverage.xml
+    reports:
+      junit: PesterTestsReport.xml
+      cobertura: cobertura-coverage.xml
+
+Create and Publish NuGet Package:
+  stage: publish
+  rules:
+    if: '$CI_COMMIT_REF_NAME == "release"'
+  script:
+    - /jenkins-pipeline/CreatePublishNuGetPackage.ps1 -SourceLocation $env:POWERSHELL_REPO_URL -PublishLocation $env:POWERSHELL_REPO_URL -NuGetAPIKey $env:POWERSHELL_REPO_APIKEY -Username $env:POWERSHELL_REPO_USR -Password (ConvertTo-SecureString $env:POWERSHELL_REPO_PW -AsPlainText -Force)

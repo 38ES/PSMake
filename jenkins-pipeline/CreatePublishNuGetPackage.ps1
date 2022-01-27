@@ -1,4 +1,6 @@
 param(
+    [string]$SourceLocation = 'https://nexus.di2e.net/nexus3/repository/Private_CEIG_NuGet/',
+    [string]$PublishLocation = 'https://nexus.di2e.net/nexus3/repository/Private_CEIG_NuGet/',
     [string]$NuGetAPIKey,
     [string]$Username,
     [securestring]$Password
@@ -7,8 +9,8 @@ param(
 try {
     $cred = [pscredential]::new($Username, $Password)
     Register-PSRepository Di2e `
-        -SourceLocation https://nexus.di2e.net/nexus3/repository/Private_CEIG_NuGet/ `
-        -PublishLocation https://nexus.di2e.net/nexus3/repository/Private_CEIG_NuGet/ `
+        -SourceLocation $SourceLocation `
+        -PublishLocation $PublishLocation `
         -Credential $cred `
         -InstallationPolicy Trusted `
         -ErrorAction Stop `
