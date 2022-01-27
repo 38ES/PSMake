@@ -1,5 +1,5 @@
 image:
-  name: registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image/docker-ceig-development-image:v2.4
+  name: registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image/docker-ceig-development-image:v2.6
   entrypoint: ["/bin/bash", "-c"]
 
 stages:
@@ -59,4 +59,4 @@ Create and Publish NuGet Package:
   rules:
     - if: '$CI_COMMIT_REF_NAME == "release"'
   script:
-    - pwsh -Command /jenkins-pipeline/CreatePublishNuGetPackage.ps1 -SourceLocation '$POWERSHELL_REPO_URL' -PublishLocation '$POWERSHELL_REPO_URL' -NuGetAPIKey '$POWERSHELL_REPO_APIKEY' -Username '$POWERSHELL_REPO_USR' -Password (ConvertTo-SecureString '$POWERSHELL_REPO_PW' -AsPlainText -Force)
+    - pwsh -Command "/jenkins-pipeline/CreatePublishNuGetPackage.ps1 -SourceLocation '$POWERSHELL_REPO_URL' -PublishLocation '$POWERSHELL_REPO_URL' -NuGetAPIKey '$POWERSHELL_REPO_APIKEY' -Username '$POWERSHELL_REPO_USR' -Password (ConvertTo-SecureString '$POWERSHELL_REPO_PW' -AsPlainText -Force)"
