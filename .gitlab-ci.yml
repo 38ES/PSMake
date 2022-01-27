@@ -1,6 +1,6 @@
 image:
   name: registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image/docker-ceig-development-image:v2.4
-  entrypoint: ["/opt/microsoft/powershell/7-lts/pwsh"]
+  entrypoint: ["/opt/microsoft/powershell/7-lts/pwsh", "-File", "-"]
 
 stages:
 - environment
