@@ -85,7 +85,6 @@ Build and Publish Docker image:
     - export IMAGE_FULLNAME="$CI_REGISTRY_IMAGE/$IMAGE_NAME"
     - export STORAGE_DRIVER=vfs
     - buildah login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-    - buildah login -u "$BUILDAH_AUTH_USER" -p "$BUILDAH_AUTH_PW" registry1.dso.mil
   script:
     - buildah bud -t "$IMAGE_FULLNAME" --format docker .
     - buildah push "$IMAGE_FULLNAME"
