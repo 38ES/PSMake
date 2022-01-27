@@ -17,11 +17,12 @@ try {
         -InstallationPolicy Trusted `
         -ErrorAction Stop `
         -WarningAction Stop
+
     import-module $PSScriptRoot\..\make.psd1
     make clean
     make
     
-    Publish-Module -Path ./dist/Release/make -NuGetApiKey $NuGetAPIKey -Repository $Name -Credential $cred -ErrorAction Stop
+    Publish-Module -Path ./dist/Release/make -NuGetApiKey $NuGetAPIKey -Repository $Name -Credential $cred -ErrorAction Stop -Force
 } catch {
     Write-Error $_
     exit 1

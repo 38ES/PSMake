@@ -1,6 +1,7 @@
 pipeline {
     agent {
-        dockerfile {
+        docker {
+            image 'docker-di2e.di2e.net/ceig-development:v1.1'
             registryUrl 'https://docker-di2e.di2e.net'
             registryCredentialsId 'CEIG-CI'
             args '-u 0:0'

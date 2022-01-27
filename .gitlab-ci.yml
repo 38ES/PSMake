@@ -7,6 +7,7 @@ stages:
 - build
 - test
 - publish
+- docker-publish
 
 Output Environment:
   stage: environment
@@ -60,3 +61,31 @@ Create and Publish NuGet Package:
     - if: '$CI_COMMIT_REF_NAME == "release"'
   script:
     - pwsh -Command "./jenkins-pipeline/CreatePublishNuGetPackage.ps1 -Name '38Nexus' -SourceLocation '$POWERSHELL_REPO_URL' -PublishLocation '$POWERSHELL_REPO_URL' -NuGetAPIKey '$POWERSHELL_REPO_APIKEY' -Username '$POWERSHELL_REPO_USR' -Password (ConvertTo-SecureString '$POWERSHELL_REPO_PW' -AsPlainText -Force)"
+    - pwsh -Command "Import-PowerShellDataFile ./make.psd1 | Select-Object -ExpandProperty ModuleVersion | Out-File version -Encoding ascii"
+    - mkdir local-repo
+    - pwsh -Command "Register-PSRepository -Name LocalRepo -SourceLocation ./local-repo -PublishLocation ./local-repo -InstallationPolicy Trusted -ErrorAction Stop"
+    - pwsh -Command "Publish-Module -Path ./dist/Release/make -Repository LocalRepo -ErrorAction Stop"
+  artifacts:
+    paths:
+      - ./version
+      - ./local-repo
+
+Build and Publish Docker image:
+  stage: docker-publish
+  image:
+    name: quay.io/buildah/stable
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "release"'
+  dependencies: ['Create and Publish NuGet Package']
+  before_script:
+    - cp /etc/gitlab-runner/certs/ca.crt /etc/pki/ca-trust/source/anchors/
+    - update-ca-trust enable
+    - update-ca-trust extract
+    - export IMAGE_NAME="ceig-make:$(cat version)"
+    - export IMAGE_FULLNAME="$CI_REGISTRY_IMAGE/$IMAGE_NAME"
+    - export STORAGE_DRIVER=vfs
+    - buildah login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - buildah login -u "$BUILDAH_AUTH_USER" -p "$BUILDAH_AUTH_PW" registry1.dso.mil
+  script:
+    - buildah bud -t "$IMAGE_FULLNAME" --format docker .
+    - buildah push "$IMAGE_FULLNAME"
