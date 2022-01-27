@@ -20,8 +20,7 @@ try {
     import-module $PSScriptRoot\..\make.psd1
     make clean
     make
-    # Check if the repo is there
-    Find-Module -Repository $Name -Credential $cred
+    
     Publish-Module -Path ./dist/Release/make -NuGetApiKey $NuGetAPIKey -Repository $Name -Credential $cred -ErrorAction Stop
 } catch {
     Write-Error $_
