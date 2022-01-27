@@ -59,4 +59,4 @@ Create and Publish NuGet Package:
   rules:
     - if: '$CI_COMMIT_REF_NAME == "release"'
   script:
-    - pwsh -Command "/jenkins-pipeline/CreatePublishNuGetPackage.ps1 -SourceLocation '$POWERSHELL_REPO_URL' -PublishLocation '$POWERSHELL_REPO_URL' -NuGetAPIKey '$POWERSHELL_REPO_APIKEY' -Username '$POWERSHELL_REPO_USR' -Password (ConvertTo-SecureString '$POWERSHELL_REPO_PW' -AsPlainText -Force)"
+    - pwsh -Command "./jenkins-pipeline/CreatePublishNuGetPackage.ps1 -SourceLocation '$POWERSHELL_REPO_URL' -PublishLocation '$POWERSHELL_REPO_URL' -NuGetAPIKey '$POWERSHELL_REPO_APIKEY' -Username '$POWERSHELL_REPO_USR' -Password (ConvertTo-SecureString '$POWERSHELL_REPO_PW' -AsPlainText -Force)"
