@@ -16,7 +16,7 @@ Output Environment:
     - ls $PS_INSTALL_FOLDER
     - pwsh -Command \$PSVersionTable
     - pwsh -Command gci Env:/
-    - pwsh gci
+    - pwsh -Command gci
 
 Build Project -- Debug:
   stage: build
