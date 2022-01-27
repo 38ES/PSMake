@@ -55,6 +55,6 @@ Test Project:
 Create and Publish NuGet Package:
   stage: publish
   rules:
-    if: '$CI_COMMIT_REF_NAME == "release"'
+    - if: '$CI_COMMIT_REF_NAME == "release"'
   script:
     - /jenkins-pipeline/CreatePublishNuGetPackage.ps1 -SourceLocation $env:POWERSHELL_REPO_URL -PublishLocation $env:POWERSHELL_REPO_URL -NuGetAPIKey $env:POWERSHELL_REPO_APIKEY -Username $env:POWERSHELL_REPO_USR -Password (ConvertTo-SecureString $env:POWERSHELL_REPO_PW -AsPlainText -Force)
