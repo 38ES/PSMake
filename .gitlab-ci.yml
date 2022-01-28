@@ -88,13 +88,13 @@ Test Project:
       Publish-Module -Path "\$(\$env:PWD)/dist/Release/make" -Repository LocalRepo -ErrorAction Stop
     EOF
 
-# Exports the module version with a prerelease of 'build' and date timestamp of Year, Month, Day, Military hours, and minutes
+# Exports the module version with a prerelease of 'rc' (Release Client) and date timestamp of Year, Month, Day, Military hours, and minutes
 .set-export-prerelease: &set-export-prerelease |
   pwsh << EOF
     Import-Module Configuration
 
     \$date = (Get-Date).ToString("yyyyMMddHHmm")
-    \$prerelease = "build\$date"
+    \$prerelease = "rc\$date"
     \$version = Import-PowerShellDataFile ./dist/Release/make/make.psd1 | Select-Object -ExpandProperty ModuleVersion
     
     Update-Metadata -Path .\dist\Release\make\make.psd1 -PropertyName 'PrivateData.PSData.Prerelease' -Value \$prerelease
