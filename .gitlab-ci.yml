@@ -1,16 +1,17 @@
 image:
-  name: registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image/docker-ceig-development-image:v2.6
+  name: registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image:2.2
   entrypoint: ["/bin/bash", "-c"]
 
 stages:
-- environment
-- build
-- test
-- publish
-- docker-publish
+  - .pre
+  - build
+  - test
+  - publish
+  - publish-docker
+
 
 Output Environment:
-  stage: environment
+  stage: .pre
   script:
     - which pwsh
     - env
@@ -33,6 +34,7 @@ Build Project -- Release:
   stage: build
   rules:
     - if: '$CI_COMMIT_REF_NAME == "release"'
+    - if: '$CI_COMMIT_TAG'
   script:
     - pwsh -File ./jenkins-pipeline/BuildProjectRelease.ps1
   artifacts:
@@ -41,6 +43,7 @@ Build Project -- Release:
 
 Test Project:
   stage: test
+  needs: []
   script:
     - pwsh -File ./jenkins-pipeline/TestProject.ps1
   after_script:
@@ -55,36 +58,106 @@ Test Project:
       junit: PesterTestsReport.xml
       cobertura: cobertura-coverage.xml
 
-Create and Publish NuGet Package:
-  stage: publish
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "release"'
-  script:
-    - pwsh -Command "./jenkins-pipeline/CreatePublishNuGetPackage.ps1 -Name '38Nexus' -SourceLocation '$POWERSHELL_REPO_URL' -PublishLocation '$POWERSHELL_REPO_URL' -NuGetAPIKey '$POWERSHELL_REPO_APIKEY' -Username '$POWERSHELL_REPO_USR' -Password (ConvertTo-SecureString '$POWERSHELL_REPO_PW' -AsPlainText -Force)"
-    - pwsh -Command "Import-PowerShellDataFile ./make.psd1 | Select-Object -ExpandProperty ModuleVersion | Out-File version -Encoding ascii"
-    - mkdir local-repo
-    - pwsh -Command "Register-PSRepository -Name LocalRepo -SourceLocation \"\$(\$env:PWD)/local-repo\" -PublishLocation \"\$(\$env:PWD)/local-repo\" -InstallationPolicy Trusted -ErrorAction Stop"
-    - pwsh -Command "Publish-Module -Path \"\$(\$env:PWD)/dist/Release/make\" -Repository LocalRepo -ErrorAction Stop"
+
+# Publishes the PowerShell module to a remote repository and locally within the ./local-repo folder
+.publish-module: &publish-module
+  - |
+    pwsh << EOF
+    ./jenkins-pipeline/CreatePublishNuGetPackage.ps1 `
+      -Name '38Nexus' `
+      -SourceLocation $env:POWERSHELL_REPO_URL `
+      -PublishLocation $env:POWERSHELL_REPO_URL `
+      -NuGetAPIKey $env:POWERSHELL_REPO_APIKEY `
+      -Username $env:POWERSHELL_REPO_USR `
+      -Password (ConvertTo-SecureString $env:POWERSHELL_REPO_PW -AsPlainText -Force)
+    EOF
+  - mkdir local-repo
+  - |
+    pwsh << EOF
+    Register-PSRepository `
+      -Name LocalRepo `
+      -SourceLocation "$($env:PWD)/local-repo" `
+      -PublishLocation "$($env:PWD)/local-repo" `
+      -InstallationPolicy Trusted `
+      -ErrorAction Stop
+    EOF
+  - |
+    pwsh << EOF
+    Publish-Module -Path "$($env:PWD)/dist/Release/make" -Repository LocalRepo -ErrorAction Stop
+    EOF
+
+# Exports the module version with a prerelease of RC (Release Client) and date timestamp of Year, Month, Day, Military hours, and minutes
+.set-export-prerelease: &set-export-prerelease |
+  pwsh << EOF
+    Import-Module Configuration
+
+    $date = (Get-Date).ToString("yyyyMMddHHmm")
+    $prerelease = "rc$date"
+    $version = Import-PowerShellDataFile ./dist/Release/make.psd1 | Select-Object -ExpandProperty ModuleVersion
+    
+    Update-Metadata -Path .\dist\Release\make.psd1 -PropertyName 'PrivateData.PSData.PreRelease' -Value $prerelease
+    
+    "$version-$prerelease" | Out-File version -Encoding ascii
+  EOF
+
+# Exports the Module version with no prerelease being set
+.set-export-release: &set-export-release |
+  pwsh << EOF
+    Import-PowerShellDataFile ./make.psd1 | Select-Object -ExpandProperty ModuleVersion | Out-File version -Encoding ascii
+  EOF
+
+.publish-artifacts: &publish-artifacts
   artifacts:
     paths:
       - ./version
       - ./local-repo
 
-Build and Publish Docker image:
-  stage: docker-publish
-  image:
-    name: quay.io/buildah/stable
+Publish NuGet -- Prerelease:
+  stage: publish
+  needs: ["Build Project -- Release", "Test Project"]
   rules:
     - if: '$CI_COMMIT_REF_NAME == "release"'
-  dependencies: ['Create and Publish NuGet Package']
+  script:
+    - *set-export-prerelease
+    - *publish-module
+  <<: *publish-artifacts
+
+Publish NuGet -- Release:
+  stage: publish
+  needs: ["Build Project -- Release", "Test Project"]
+  rules:
+    - if: '$CI_COMMIT_TAG'
+  script:
+    - *set-export-release
+    - *publish-module
+  <<: *publish-artifacts
+
+# Docker build job template used for making seperate jobs for Release and PreRelease
+.build-docker: &build-docker
+  image:
+    name: quay.io/buildah/stable
+  variables:
+    IMAGE_VERSION: $(cat version)
+    STORAGE_DRIVER: vfs
   before_script:
     - cp /etc/gitlab-runner/certs/ca.crt /etc/pki/ca-trust/source/anchors/
     - update-ca-trust enable
     - update-ca-trust extract
-    - export IMAGE_NAME="ceig-make:$(cat version)"
-    - export IMAGE_FULLNAME="$CI_REGISTRY_IMAGE/$IMAGE_NAME"
-    - export STORAGE_DRIVER=vfs
     - buildah login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - buildah bud -t "$IMAGE_FULLNAME" --format docker .
-    - buildah push "$IMAGE_FULLNAME"
+    - buildah bud -t "$CI_REGISTRY_IMAGE:$IMAGE_VERSION" --format docker .
+    - buildah push "$CI_REGISTRY_IMAGE:$IMAGE_VERSION"
+
+Build And Publish Docker Image -- Prerelease:
+  stage: publish-docker
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "release"'
+  needs: ['Publish NuGet -- Prerelease']
+  <<: *build-docker
+
+Build And Publish Docker Image -- Release:
+  stage: publish-docker
+  rules:
+    - if: '$CI_COMMIT_TAG'
+  needs: ['Publish NuGet -- Release']
+  <<: *build-docker

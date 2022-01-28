@@ -13,13 +13,13 @@
             CustomCode {
                 # Import System.Security from GAC if Windows PowerShell is being used
                 if ( ([version]$PSVersionTable.PSVersion).Major -lt 6) {
-                    $asm = [System.Reflection.Assembly]::LoadFromPartialName("System.Seurity")
+                    $asm = [System.Reflection.Assembly]::LoadWithPartialName('System.Security')
                     if ($null -eq $asm) {
                         throw 'Unable to load System.Security from GAC for Windows PowerShell'
                     }
                 }
             }
-            
+
             Collate {
                 Get-ChildItem .\functions -Recurse -File
             }
