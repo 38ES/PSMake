@@ -81,7 +81,7 @@ Test Project:
         -PublishLocation "\$(\$env:PWD)/local-repo" \`
         -InstallationPolicy Trusted \`
         -ErrorAction Stop
-      
+
     EOF
   - |
     pwsh << EOF
@@ -139,7 +139,6 @@ Publish NuGet -- Release:
   image:
     name: quay.io/buildah/stable
   variables:
-    IMAGE_VERSION: $(cat version)
     STORAGE_DRIVER: vfs
   before_script:
     - cp /etc/gitlab-runner/certs/ca.crt /etc/pki/ca-trust/source/anchors/
@@ -147,8 +146,8 @@ Publish NuGet -- Release:
     - update-ca-trust extract
     - buildah login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - buildah bud -t "$CI_REGISTRY_IMAGE:$IMAGE_VERSION" --format docker .
-    - buildah push "$CI_REGISTRY_IMAGE:$IMAGE_VERSION"
+    - buildah bud -t "$CI_REGISTRY_IMAGE:$(cat version)" --format docker .
+    - buildah push "$CI_REGISTRY_IMAGE:$(cat version)"
 
 Build And Publish Docker Image -- Prerelease:
   stage: publish-docker
