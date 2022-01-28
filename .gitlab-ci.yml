@@ -60,28 +60,31 @@ Test Project:
 
 
 # Publishes the PowerShell module to a remote repository and locally within the ./local-repo folder
-.publish-module: &publish-module |
-  pwsh << EOF
-  ./jenkins-pipeline/CreatePublishNuGetPackage.ps1 \`
-    -Name '38Nexus' `
-    -SourceLocation \$env:POWERSHELL_REPO_URL \`
-    -PublishLocation \$env:POWERSHELL_REPO_URL \`
-    -NuGetAPIKey \$env:POWERSHELL_REPO_APIKEY \`
-    -Username \$env:POWERSHELL_REPO_USR \`
-    -Password (ConvertTo-SecureString \$env:POWERSHELL_REPO_PW -AsPlainText -Force)
-  EOF
-  mkdir local-repo
-  pwsh << EOF
-    Register-PSRepository \`
-      -Name LocalRepo \`
-      -SourceLocation "\$(\$env:PWD)/local-repo" \`
-      -PublishLocation "\$(\$env:PWD)/local-repo" \`
-      -InstallationPolicy Trusted \`
-      -ErrorAction Stop
+.publish-module: &publish-module
+  - |
+    pwsh << EOF
+      ./jenkins-pipeline/CreatePublishNuGetPackage.ps1 \`
+        -Name '38Nexus' \`
+        -SourceLocation \$env:POWERSHELL_REPO_URL \`
+        -PublishLocation \$env:POWERSHELL_REPO_URL \`
+        -NuGetAPIKey \$env:POWERSHELL_REPO_APIKEY \`
+        -Username \$env:POWERSHELL_REPO_USR \`
+        -Password (ConvertTo-SecureString \$env:POWERSHELL_REPO_PW -AsPlainText -Force)
     EOF
-  pwsh << EOF
-  Publish-Module -Path "\$(\$env:PWD)/dist/Release/make" -Repository LocalRepo -ErrorAction Stop
-  EOF
+  - mkdir local-repo
+  - |
+    pwsh << EOF
+      Register-PSRepository \`
+        -Name LocalRepo \`
+        -SourceLocation "\$(\$env:PWD)/local-repo" \`
+        -PublishLocation "\$(\$env:PWD)/local-repo" \`
+        -InstallationPolicy Trusted \`
+        -ErrorAction Stop
+    EOF
+  - |
+    pwsh << EOF
+      Publish-Module -Path "\$(\$env:PWD)/dist/Release/make" -Repository LocalRepo -ErrorAction Stop
+    EOF
 
 # Exports the module version with a prerelease of RC (Release Client) and date timestamp of Year, Month, Day, Military hours, and minutes
 .set-export-prerelease: &set-export-prerelease |
