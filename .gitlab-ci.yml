@@ -63,12 +63,12 @@ Test Project:
 .publish-module: &publish-module
   - |
     pwsh << EOF
-    ./jenkins-pipeline/CreatePublishNuGetPackage.ps1 \`
+    ./jenkins-pipeline/CreatePublishNuGetPackage.ps1 \\\`
       -Name '38Nexus' `
-      -SourceLocation \$env:POWERSHELL_REPO_URL \`
-      -PublishLocation \$env:POWERSHELL_REPO_URL \`
-      -NuGetAPIKey \$env:POWERSHELL_REPO_APIKEY \`
-      -Username \$env:POWERSHELL_REPO_USR \`
+      -SourceLocation \$env:POWERSHELL_REPO_URL \\\`
+      -PublishLocation \$env:POWERSHELL_REPO_URL \\\`
+      -NuGetAPIKey \$env:POWERSHELL_REPO_APIKEY \\\`
+      -Username \$env:POWERSHELL_REPO_USR \\\`
       -Password (ConvertTo-SecureString \$env:POWERSHELL_REPO_PW -AsPlainText -Force)
     EOF
   - mkdir local-repo
@@ -76,9 +76,9 @@ Test Project:
     pwsh << EOF
     Register-PSRepository \`
       -Name LocalRepo \`
-      -SourceLocation "\$(\$env:PWD)/local-repo" \`
-      -PublishLocation "\$(\$env:PWD)/local-repo" \`
-      -InstallationPolicy Trusted \`
+      -SourceLocation "\$(\$env:PWD)/local-repo" \\\`
+      -PublishLocation "\$(\$env:PWD)/local-repo" \\\`
+      -InstallationPolicy Trusted \\\`
       -ErrorAction Stop
     EOF
   - |
@@ -93,9 +93,9 @@ Test Project:
 
     \$date = (Get-Date).ToString("yyyyMMddHHmm")
     \$prerelease = "rc\$date"
-    \$version = Import-PowerShellDataFile ./dist/Release/make.psd1 | Select-Object -ExpandProperty ModuleVersion
+    \$version = Import-PowerShellDataFile ./dist/Release/make/make.psd1 | Select-Object -ExpandProperty ModuleVersion
     
-    Update-Metadata -Path .\dist\Release\make.psd1 -PropertyName 'PrivateData.PSData.PreRelease' -Value \$prerelease
+    Update-Metadata -Path .\dist\Release\make\make.psd1 -PropertyName 'PrivateData.PSData.PreRelease' -Value \$prerelease
     
     "\$version-\$prerelease" | Out-File version -Encoding ascii
   EOF
