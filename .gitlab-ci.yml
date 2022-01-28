@@ -70,6 +70,7 @@ Test Project:
         -NuGetAPIKey \$env:POWERSHELL_REPO_APIKEY \`
         -Username \$env:POWERSHELL_REPO_USR \`
         -Password (ConvertTo-SecureString \$env:POWERSHELL_REPO_PW -AsPlainText -Force)
+
     EOF
   - mkdir local-repo
   - |
@@ -80,6 +81,7 @@ Test Project:
         -PublishLocation "\$(\$env:PWD)/local-repo" \`
         -InstallationPolicy Trusted \`
         -ErrorAction Stop
+      
     EOF
   - |
     pwsh << EOF
