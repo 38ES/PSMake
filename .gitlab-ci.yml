@@ -97,7 +97,7 @@ Test Project:
     \$prerelease = "rc\$date"
     \$version = Import-PowerShellDataFile ./dist/Release/make/make.psd1 | Select-Object -ExpandProperty ModuleVersion
     
-    Update-Metadata -Path .\dist\Release\make\make.psd1 -PropertyName 'PrivateData.PSData.PreRelease' -Value \$prerelease
+    Update-Metadata -Path .\dist\Release\make\make.psd1 -PropertyName 'PrivateData.PSData.Prerelease' -Value \$prerelease
     
     "\$version-\$prerelease" | Out-File version -Encoding ascii
   EOF
