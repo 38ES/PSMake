@@ -4,3 +4,4 @@ src/**/obj
 **/PesterTestsReport.xml
 **/report.xml
 **/CodeCoverageReport.xml
+.vscode/*

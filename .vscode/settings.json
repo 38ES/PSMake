@@ -1,6 +1,0 @@
-{
-    "dotnet-test-explorer.testProjectPath": "src/make.tests/bin/",
-    "files.watcherExclude": {
-        "**/target": true
-    }
-}
