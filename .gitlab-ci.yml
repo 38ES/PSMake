@@ -55,7 +55,9 @@ Test Project:
       - cobertura-coverage.xml
     reports:
       junit: PesterTestsReport.xml
-      cobertura: cobertura-coverage.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: cobertura-coverage.xml
 
 
 # Publishes the PowerShell module to a remote repository and locally within the ./local-repo folder
