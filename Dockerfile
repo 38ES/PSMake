@@ -1,4 +1,4 @@
-FROM registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image:2.3
+FROM registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image:2.4
 COPY ./local-repo /opt/local-repo
 USER root
 SHELL [ "pwsh", "-Command" ]
