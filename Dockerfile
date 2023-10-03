@@ -5,5 +5,5 @@ SHELL [ "pwsh", "-Command" ]
 RUN Register-PSRepository -Name LocalRepo -SourceLocation /opt/local-repo -PublishLocation /opt/local-repo -InstallationPolicy Trusted
 RUN Install-Module make -Repository LocalRepo -Scope AllUsers -ErrorAction Stop
 RUN Unregister-PSRepository -Name LocalRepo
-COPY ./jenkins-pipeline/cover2cover.py /opt/cover2cover.py
+COPY ./cover2cover.py /opt/cover2cover.py
 USER dotnet
