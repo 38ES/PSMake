@@ -64,8 +64,8 @@ PowerShell Test Coverage:
     - update-ca-trust extract
     - buildah login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - buildah bud -t "$CI_REGISTRY_IMAGE:$(cat version)" --format docker .
-    - buildah push "$CI_REGISTRY_IMAGE:$(cat version)"
+    - buildah bud -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" --format docker .
+    - buildah push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
 
 Build And Publish Docker Image:
   stage: deploy-docker
