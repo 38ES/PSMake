@@ -1,3 +1,7 @@
+BeforeDiscovery {
+    Import-Module $PSScriptRoot\..\make.psd1 -Force
+}
+
 InModuleScope 'make' {
     Describe "CopyDirectory" {
         Context "'To' parameter specified" {

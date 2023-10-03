@@ -81,7 +81,7 @@
 
         $args1 = @{
             Path = $settings.OutputModulePath
-            Repository = 'Di2e'
+            Repository = '38Nexus'
         }
 
         if($PSBoundParameters.ContainsKey('NuGetApiKey')) {
@@ -101,25 +101,7 @@
             [string]$Target
         )
 
-        if ($PSBoundParameters.ContainsKey("Target") -and $Target -eq "reports") {
-            Write-Information "Writing Test Reports!"
-        }
-        
-        $testFiles = Get-ChildItem .\tests -Recurse -File -Filter *Tests.ps1
-        $pesterArgs = @{
-            Script = $testFiles.FullName
-        }
-        if ($Target -eq "reports") {
-            $pesterArgs.Add('OutputFile', './PesterTestsReport.xml')
-            $pesterArgs.Add('OutputFormat', 'NUnitXml')
-            $pesterArgs.Add('CodeCoverageOutputFile', './CodeCoverageReport.xml')
-            $pesterArgs.Add('CodeCoverageOutputFileFormat', 'JaCoCo')
-            $pesterArgs.Add('CodeCoverage', (Get-ChildItem ./functions/* -File -Recurse).FullName)
-
-        }
-        
-        import-module ".\$($settings.ModuleName).psd1" -force -ErrorAction Stop
-        Invoke-Pester @pesterArgs
+        Invoke-Pester -Configuration (Import-CliXml .\Pester5Configuration.xml)
     }
 
 }

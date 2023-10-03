@@ -27,6 +27,7 @@ function Invoke-Build {
             
             if(-not (test-path ".\$ModuleName\$ModuleName.psd1" -PathType Leaf)) { New-ModuleManifest -Path ".\$ModuleName\$ModuleName.psd1" -CompanyName "USAF, 38 CEIG/ES" -Copyright "GOTS" -RootModule "$ModuleName.psm1" -ModuleVersion "1.0.0.0" -Author $author }
             (Get-Content "$($MyInvocation.MyCommand.Module.ModuleBase)\template.psd1").Replace("%%MODULENAME%%", $ModuleName) | Out-File ".\$ModuleName\build.psd1"
+            Copy-Item "$($MyInvocation.MyCommand.Module.ModuleBase)\Pester5Configuration.xml" ".\$ModuleName\Pester5Configuration.xml"
         }
 
         {$_ -ne "template" } {
