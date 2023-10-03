@@ -1,5 +1,6 @@
-# Tests for 'make' (Invoke-Make) build
-using module "..\make.psm1"
+BeforeDiscovery {
+    Import-Module $PSScriptRoot\..\make.psd1 -Force
+}
 
 Describe 'Make-Build' {
     Context 'With build.psd1' {
@@ -13,14 +14,15 @@ Describe 'Make-Build' {
 "@
 
             # Arrange
+            
             $fileContents | Out-File TestDrive:\build.psd1
             Push-Location TestDrive:\
-        }
-        
 
-        # Act
-        $output = Invoke-Build
-        $cleanOutput = Invoke-Build clean
+            #Act
+
+            $output = Invoke-Build
+            $cleanOutput = Invoke-Build clean
+        }
 
         It "Should call 'Build' scriptblock of build.psd1" {
             $output | Should -Be "Build Invoked"

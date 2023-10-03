@@ -6,6 +6,7 @@
             'make.psd1'
             'defaultsettings.psd1'
             'template.psd1'
+            'Pester5Configuration.xml'
         }
 
         Release {
@@ -54,7 +55,7 @@
 
         $args1 = @{
             Path = $settings.OutputModulePath
-            Repository = 'Di2e'
+            Repository = '38Nexus'
         }
 
         if($PSBoundParameters.ContainsKey('NuGetApiKey')) {
@@ -66,10 +67,7 @@
     }
     
     Test = {
-        #import-module .\make.psd1 -force
-        $testFiles = Get-ChildItem .\tests -Recurse -File
-        Invoke-Pester $testFiles.FullName `
-            -OutputFile ./PesterTestsReport.xml -OutputFormat JUnitXml `
-            -CodeCoverageOutputFile ./CodeCoverageReport.xml -CodeCoverageOutputFileFormat JaCoCo -CodeCoverage (Get-ChildItem ./functions/* -File -Recurse).FullName
+        $PWSH = if($PSVersionTable.PSVersion.Major -gt 5) { "pwsh" } else { "powershell" }
+        Start-Process $PWSH -ArgumentList @('-NoProfile', '-Command "Invoke-Pester -Configuration (Import-CliXml .\Pester5Configuration.xml) "') -NoNewWindow -Wait
     }
 }
