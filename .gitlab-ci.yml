@@ -8,7 +8,7 @@ variables:
 
 default:
   image:
-    name: registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image:v2.5
+    name: registry.90cos.cdl.af.mil/688cw/38ceig/automation/docker-ceig-development-image:v2.6
     entrypoint: ["/bin/bash", "-c"]
 
 stages:
@@ -36,6 +36,9 @@ PowerShell Test:
       - cobertura-coverage.xml
     reports:
       junit: PesterTestsReport.xml
+
+.register-repository: &register-repository
+  - echo "Repository registered in v2.6 of base image"
 
 PowerShell Test Coverage:
   stage: test
