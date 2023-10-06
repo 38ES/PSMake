@@ -6,3 +6,4 @@ src/**/obj
 **/CodeCoverageReport.xml
 .vscode/*
 example/**
+.dependencies

@@ -42,9 +42,14 @@ function Invoke-Build {
             if(-not (test-path $buildData.OutputModulePath -PathType Container)) { New-Item $buildData.OutputModulePath -ItemType Directory | Out-Null }
         }
 
+        { $_ -in "publish", "test"} {
+            ${function:RestoreDependencies}.InvokeWithContext($null, [PSVariable]::new("settings", $settings), $null)
+        }
+
         {$_ -in "", "build","clean","test","publish" } {
             if(-not $buildData.ContainsKey($Command)) { throw "Unable to run '$Command' due to build.psd1 not containing a '$Command' scriptblock" }
-            (& $buildData[$Command]).InvokeWithContext($null, [PSVariable]::new('settings', $settings), $Remaining)
+            if($buildData.ContainsKey("DevRequiredModules")) { RestoreDependencies -RequiredModule $buildData["DevRequiredModules"] }
+            InvokeWithPSModulePath -NewPSModulePath $settings.RestoredDependenciesPath -ScriptBlock { (& $buildData[$Command]).InvokeWithContext($null, [PSVariable]::new('settings', $settings), $Remaining) }
         }
 
         default {

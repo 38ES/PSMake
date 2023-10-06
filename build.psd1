@@ -1,5 +1,10 @@
 @{
     ModuleName = "make"
+    RestoreCredential = "~\.38Nexus_psrepo_credential.json"
+    DevRequiredModules = @{
+        ModuleName = "Pester"
+        ModuleVersion = "5.5.0"
+    }
     Build = {
 
         CopyFiles {
