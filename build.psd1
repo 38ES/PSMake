@@ -11,7 +11,6 @@
             'make.psd1'
             'defaultsettings.psd1'
             'template.psd1'
-            'Pester5Configuration.xml'
         }
 
         Release {
@@ -72,7 +71,8 @@
     }
     
     Test = {
-        $PWSH = if($PSVersionTable.PSVersion.Major -gt 5) { "pwsh" } else { "powershell" }
-        Start-Process $PWSH -ArgumentList @('-NoProfile', '-Command "Invoke-Pester -Configuration (Import-CliXml .\Pester5Configuration.xml) "') -NoNewWindow -Wait
+        #$PWSH = if($PSVersionTable.PSVersion.Major -gt 5) { "pwsh" } else { "powershell" }
+        #Start-Process $PWSH -ArgumentList @('-NoProfile', "-Command `"`$env:PSModulePath='$($env:PSModulePath)';Import-Module pester;Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-local.psd1); (Get-Module Pester).ModuleBase`"") -NoNewWindow -Wait
+        Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-local.psd1)
     }
 }

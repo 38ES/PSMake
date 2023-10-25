@@ -24,7 +24,7 @@ PowerShell Test:
   needs: ["PowerShell Setup"]
   coverage: /Covered (\d+\.\d+%)/
   script:
-    - pwsh -Command "{Import-Module Pester -MinimumVersion $PESTER_MAJOR_VERSION.0 -MaximumVersion $PESTER_MAJOR_VERSION.99 -ErrorAction Stop; Invoke-Pester -Configuration (Import-CliXml .\Pester5Configuration.xml)}.Invoke()"
+    - pwsh -Command "{Import-Module Pester -MinimumVersion $PESTER_MAJOR_VERSION.0 -MaximumVersion $PESTER_MAJOR_VERSION.99 -ErrorAction Stop; Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-cicd.psd1)}.Invoke()"
   after_script: []
   artifacts:
     when: always

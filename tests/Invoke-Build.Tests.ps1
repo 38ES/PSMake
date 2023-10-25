@@ -17,6 +17,7 @@ Describe 'Invoke-Build' {
                 OutputDirectory = "dist"
                 OutputModulePath = "dist\test"
                 DefaultBuildTarget = "release"
+                RestoredDependenciesPath = '.dependencies'
                 Build = {{
                     $script:workingDirectory = $PWD.Path
                     $script:buildCalled++
@@ -32,6 +33,7 @@ Describe 'Invoke-Build' {
             Mock 'Get-BuildSettings' { $build } -Verifiable -ModuleName make
             Mock 'Test-Path' { $true } -ParameterFilter { $Path -eq $build.OutputDirectory -and $PathType -eq 'Container' } -ModuleName make
             Mock 'Test-Path' { $true } -ParameterFilter { $Path -eq $build.OutputModulePath -and $PathType -eq 'Container' } -ModuleName make
+            Mock 'Test-Path' { $false } -ParameterFilter { $Path -eq $build.RestoredDependenciesPath -and $PathType -eq 'Container' } -ModuleName make
 
             Invoke-Build
         }
