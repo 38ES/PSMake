@@ -37,7 +37,6 @@ PowerShell Test:
     paths:
       - PesterTestsReport.xml
       - CodeCoverageReport.xml
-      - cobertura-coverage.xml
     reports:
       junit: PesterTestsReport.xml
 
