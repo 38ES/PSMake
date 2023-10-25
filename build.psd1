@@ -71,8 +71,14 @@
     }
     
     Test = {
+        
         #$PWSH = if($PSVersionTable.PSVersion.Major -gt 5) { "pwsh" } else { "powershell" }
         #Start-Process $PWSH -ArgumentList @('-NoProfile', "-Command `"`$env:PSModulePath='$($env:PSModulePath)';Import-Module pester;Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-local.psd1); (Get-Module Pester).ModuleBase`"") -NoNewWindow -Wait
-        Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-local.psd1)
+        if($reports) {
+            Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-cicd.psd1)
+        }
+        else {
+            Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-local.psd1)
+        }
     }
 }

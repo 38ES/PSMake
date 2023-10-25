@@ -23,13 +23,14 @@ function InvokeWithPSModulePath {
     
     $env:PSModulePath = [string]::Join($seperatorChar, $newList)
     Write-Verbose "PSModulePath = $($env:PSModulePath)"
-    $ps = [PowerShell]::Create([System.Management.Automation.RunspaceMode]::NewRunspace)
+    $ps = [PowerShell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
     try {
+        
         $ps.AddCommand("Set-Location") | Out-Null
         $ps.AddArgument((Get-Location).Path) | Out-Null
-        $ps.AddStatement() | Out-Null
+       
         $ps.AddScript("`$env:PSModulePath=$($env:PSModulePath)") | Out-Null
-        $ps.AddStatement() | Out-Null
+        
         $ps.AddCommand("Invoke-Command") | Out-Null
         $ps.AddParameter("ScriptBlock", $ScriptBlock) | Out-Null
         $ps.Invoke()
