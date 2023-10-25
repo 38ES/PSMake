@@ -29,8 +29,12 @@ Describe 'Make-Template' {
             (test-path .\example\build.psd1 -PathType Leaf) | Should -BeTrue
         }
 
-        It 'Should create a Pester5Configuration.xml file' {
-            (test-path .\example\Pester5Configuration.xml -PathType Leaf) | Should -BeTrue
+        It 'Should create a Pester5Configuration-local.psd1 file' {
+            (test-path .\example\Pester5Configuration-local.psd1 -PathType Leaf) | Should -BeTrue
+        }
+
+        It 'Should create a Pester5Configuration-cicd.psd1 file' {
+            (test-path .\example\Pester5Configuration-cicd.psd1 -PathType Leaf) | Should -BeTrue
         }
 
         AfterAll {

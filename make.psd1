@@ -12,7 +12,7 @@
 RootModule = '.\make.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.5'
+ModuleVersion = '2.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -51,7 +51,7 @@ Description = 'Used to build powershell modules for distribution'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+RequiredModules = @(@{ ModuleName = "PowerShellGet"; ModuleVersion = "2.2.5" })
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @('netstandard.dll')

@@ -27,7 +27,8 @@ function Invoke-Build {
             
             if(-not (test-path ".\$ModuleName\$ModuleName.psd1" -PathType Leaf)) { New-ModuleManifest -Path ".\$ModuleName\$ModuleName.psd1" -CompanyName "USAF, 38 CEIG/ES" -Copyright "GOTS" -RootModule "$ModuleName.psm1" -ModuleVersion "1.0.0.0" -Author $author }
             (Get-Content "$($MyInvocation.MyCommand.Module.ModuleBase)\template.psd1").Replace("%%MODULENAME%%", $ModuleName) | Out-File ".\$ModuleName\build.psd1"
-            Copy-Item "$($MyInvocation.MyCommand.Module.ModuleBase)\Pester5Configuration.xml" ".\$ModuleName\Pester5Configuration.xml"
+            Copy-Item "$($MyInvocation.MyCommand.Module.ModuleBase)\Pester5Configuration-local.psd1" ".\$ModuleName\Pester5Configuration-local.psd1"
+            Copy-Item "$($MyInvocation.MyCommand.Module.ModuleBase)\Pester5Configuration-cicd.psd1" ".\$ModuleName\Pester5Configuration-cicd.psd1"
         }
 
         {$_ -ne "template" } {
@@ -42,9 +43,14 @@ function Invoke-Build {
             if(-not (test-path $buildData.OutputModulePath -PathType Container)) { New-Item $buildData.OutputModulePath -ItemType Directory | Out-Null }
         }
 
+        { $_ -in "publish", "test"} {
+            ${function:RestoreDependencies}.InvokeWithContext($null, [PSVariable]::new("settings", $settings), $null)
+        }
+
         {$_ -in "", "build","clean","test","publish" } {
             if(-not $buildData.ContainsKey($Command)) { throw "Unable to run '$Command' due to build.psd1 not containing a '$Command' scriptblock" }
-            (& $buildData[$Command]).InvokeWithContext($null, [PSVariable]::new('settings', $settings), $Remaining)
+            if($buildData.ContainsKey("DevRequiredModules")) { RestoreDependencies -RequiredModule $buildData["DevRequiredModules"] }
+            InvokeWithPSModulePath -NewPSModulePath $settings.RestoredDependenciesPath -ScriptBlock { (& $buildData[$Command]).InvokeWithContext($null, [PSVariable]::new('settings', $settings), $Remaining) }.GetNewClosure()
         }
 
         default {

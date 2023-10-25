@@ -13,9 +13,9 @@ Describe 'Make-Publish' {
     Publish = { param([string]`$arg) "Published with: `$arg" }
 }
 "@
-        
         # Arrange
         $fileContents | Out-File TestDrive:\build.psd1
+        New-ModuleManifest -Path TestDrive:\test.psd1 -RootModule 'test.psm1'
         Push-Location TestDrive:\
     }
 

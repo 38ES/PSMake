@@ -24,6 +24,29 @@
     # DEFAULT IS Release
     #DefaultBuildTarget = 'Release'
 
+    ###
+    # OPTIONAL - Default dependency restoration path
+    # DEFAULT IS .dependencies
+    #RestoredDependenciesPath = '.dependencies'
+
+    ###
+    # OPTIONAL - Restore dependency credential
+    # DEFAULT IS $null
+    # Can be a PSCredential type, path, or factory scriptblock that returns a PSCredential
+    #RestoreCredential = $null
+
+    ###
+    # OPTIONAL - Specifies PowerShell module required for Development
+    # Default is $null
+    # List of strings or hashtables specifying modules
+    # string - module with that name, any version
+    # hashtable - @{
+    #     ModuleName = name of the module
+    #     RequiredVersion = specific version
+    #     ModuleVersion = specific version or higher
+    #}
+    #DevRequiredModules = ''
+
     ##
     # REQUIRED - Script to build the module 
     ##
