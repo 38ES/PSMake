@@ -19,6 +19,10 @@ stages:
   - deploy-docker
   - trigger
 
+PowerShell Build:
+  script:
+    - pwsh -Command "{Import-Module ./make.psd1 -ErrorAction Stop; make clean -ErrorAction Stop; make build -ErrorAction Stop -Verbose}.Invoke()"
+
 PowerShell Test:
   stage: test
   needs: ["PowerShell Setup"]
