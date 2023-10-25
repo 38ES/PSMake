@@ -1,3 +1,5 @@
+using namespace System.IO
+
 function InvokeWithPSModulePath {
     [CmdletBinding()]
     param(
@@ -7,7 +9,7 @@ function InvokeWithPSModulePath {
 
     $pe = GetPlatformEnvironment
     
-    $seperatorChar = switch($pe.OSPlatform) {
+    $seperatorChar = switch($pe.Platform) {
         { $_ -in [System.PlatformID]::MacOSX, [System.PlatformID]::Unix } {
             ':'
         }
@@ -29,10 +31,13 @@ function InvokeWithPSModulePath {
         $ps.AddCommand("Set-Location") | Out-Null
         $ps.AddArgument((Get-Location).Path) | Out-Null
        
-        $ps.AddScript("`$env:PSModulePath=$($env:PSModulePath)") | Out-Null
+        $ps.AddScript("`$env:PSModulePath='$($env:PSModulePath)'") | Out-Null
+        $ps.AddCommand("Import-Module") | Out-Null
+        $ps.AddParameter("Name", [Path]::Combine($MyInvocation.MyCommand.Module.ModuleBase, "make.psd1")) | Out-Null
+
         
         $ps.AddCommand("Invoke-Command") | Out-Null
-        $ps.AddParameter("ScriptBlock", $ScriptBlock) | Out-Null
+        $ps.AddParameter("ScriptBlock", { . $MyInvocation.MyCommand.Module $ScriptBlock }.GetNewClosure()) | Out-Null
         $ps.Invoke()
 
         if($ps.HasErrors) {
