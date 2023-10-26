@@ -70,28 +70,10 @@ PowerShell Test Coverage:
   EOF
 
 
-.register-localrepo: &register-localrepo
-  - mkdir local-repo
-  - |
-    pwsh << EOF
-      Register-PSRepository \`
-        -Name \$env:LOCAL_REPO_NAME \`
-        -SourceLocation "\$(\$env:PWD)/local-repo" \`
-        -PublishLocation "\$(\$env:PWD)/local-repo" \`
-        -InstallationPolicy Trusted \`
-        -ErrorAction Stop
-
-    EOF
-
 .publish-module: &publish-module
   - pwsh -Command "Install-Module powershell-yaml -Force -AllowClobber"
   - pwsh -Command "Publish-Module -Path ./dist/Release/$MODULE_NAME/ -Repository \$env:POWERSHELL_REPO_NAME -NuGetApiKey \$env:POWERSHELL_REPO_APIKEY -Credential \$([pscredential]::new(\$env:POWERSHELL_REPO_USR, (ConvertTo-SecureString -String \$env:POWERSHELL_REPO_PW -AsPlainText -Force)))"
-  - pwsh -Command "Publish-Module -Path ./dist/Release/$MODULE_NAME/ -Repository \$env:LOCAL_REPO_NAME -ErrorAction Stop"
 
-.publish-job-artifacts: &publish-job-artifacts
-  artifacts:
-    paths:
-      - ./local-repo/*.nupkg
 
 Powershell Publish Prerelease:
   stage: deploy
@@ -101,9 +83,7 @@ Powershell Publish Prerelease:
   script:
     - *set-export-prerelease
     - *register-repository
-    - *register-localrepo
     - *publish-module
-  <<: *publish-job-artifacts
 
 PowerShell Publish Release:
   stage: deploy
@@ -112,9 +92,7 @@ PowerShell Publish Release:
    - if: '$CI_COMMIT_TAG'
   script:
     - *register-repository
-    - *register-localrepo
     - *publish-module
-  <<: *publish-job-artifacts
 
 # Docker build job template used for making seperate jobs for Release and PreRelease
 .build-docker: &build-docker
