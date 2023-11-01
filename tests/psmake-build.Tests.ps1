@@ -1,5 +1,5 @@
 BeforeDiscovery {
-    Import-Module $PSScriptRoot\..\make.psd1 -Force
+    Import-Module $PSScriptRoot\..\PSMake.psd1 -Force
 }
 
 Describe 'Make-Build' {
@@ -20,8 +20,8 @@ Describe 'Make-Build' {
 
             #Act
 
-            $output = Invoke-Build
-            $cleanOutput = Invoke-Build clean
+            $output = Invoke-PSMake
+            $cleanOutput = Invoke-PSMake clean
         }
 
         It "Should call 'Build' scriptblock of build.psd1" {
@@ -45,7 +45,7 @@ Describe 'Make-Build' {
         }
 
         It "Should throw an exception" {
-             { Invoke-Build } | Should -Throw "No build.psd1 file found!"
+             { Invoke-PSMake } | Should -Throw "No build.psd1 file found!"
         }
         
         AfterAll {

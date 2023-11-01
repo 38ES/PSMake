@@ -28,12 +28,12 @@ function InvokeWithPSModulePath {
     $ps = [PowerShell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
     try {
         
-        $ps.AddCommand("Set-Location") | Out-Null
-        $ps.AddArgument((Get-Location).Path) | Out-Null
+        #$ps.AddCommand("Set-Location") | Out-Null
+        #$ps.AddArgument((Get-Location).Path) | Out-Null
        
         $ps.AddScript("`$env:PSModulePath='$($env:PSModulePath)'") | Out-Null
-        $ps.AddCommand("Import-Module") | Out-Null
-        $ps.AddParameter("Name", [Path]::Combine($MyInvocation.MyCommand.Module.ModuleBase, "make.psd1")) | Out-Null
+        #$ps.AddCommand("Import-Module") | Out-Null
+        #$ps.AddParameter("Name", [Path]::Combine($MyInvocation.MyCommand.Module.ModuleBase, "PSMake.psd1")) | Out-Null
 
         
         $ps.AddCommand("Invoke-Command") | Out-Null

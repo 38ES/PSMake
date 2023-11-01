@@ -1,5 +1,5 @@
 BeforeDiscovery {
-    Import-Module $PSScriptRoot\..\make.psd1 -Force
+    Import-Module $PSScriptRoot\..\PSMake.psd1 -Force
 }
 
 Describe 'Make-Publish' {
@@ -21,7 +21,7 @@ Describe 'Make-Publish' {
 
     Context 'Is Invoked without args' {
         BeforeAll {
-            $output = Invoke-Build publish
+            $output = Invoke-PSMake publish
         }
 
         It "Should call 'Publish' scriptblock of build.psd1" {
@@ -31,7 +31,7 @@ Describe 'Make-Publish' {
     
     Context 'Is Invoked With Args' {
         BeforeAll {
-            $output = Invoke-Build publish 'myApiKey'
+            $output = Invoke-PSMake publish 'myApiKey'
         }
 
         It "Should call 'Publish' scriptblock of build.psd1 with args" {

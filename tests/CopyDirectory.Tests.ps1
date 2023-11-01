@@ -1,8 +1,8 @@
 BeforeDiscovery {
-    Import-Module $PSScriptRoot\..\make.psd1 -Force
+    Import-Module $PSScriptRoot\..\PSMake.psd1 -Force
 }
 
-InModuleScope 'make' {
+InModuleScope 'PSMake' {
     Describe "CopyDirectory" {
         Context "'To' parameter specified" {
             BeforeAll {

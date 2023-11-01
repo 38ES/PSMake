@@ -21,7 +21,7 @@ stages:
 
 PowerShell Build:
   script:
-    - pwsh -Command "{Import-Module ./make.psd1 -ErrorAction Stop; make clean -ErrorAction Stop; make build -ErrorAction Stop -Verbose}.Invoke()"
+    - pwsh -Command "{Import-Module ./PSMake.psd1 -ErrorAction Stop; PSMake clean -ErrorAction Stop; PSMake build -ErrorAction Stop -Verbose}.Invoke()"
 
 PowerShell Test:
   stage: test

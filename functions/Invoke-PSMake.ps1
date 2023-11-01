@@ -1,4 +1,4 @@
-function Invoke-Build {
+function Invoke-PSMake {
     [CmdletBinding()]
     param(
         [ValidateSet("","build", "clean", "test", "template", "publish")]
@@ -59,7 +59,7 @@ function Invoke-Build {
     }
 }
 
-New-Alias -Name "make" Invoke-Build -ErrorAction SilentlyContinue
+New-Alias -Name "psmake" Invoke-PSMake -ErrorAction SilentlyContinue
 
-Export-ModuleMember -Function 'Invoke-Build'
-Export-ModuleMember -Alias "make"
+Export-ModuleMember -Function 'Invoke-PSMake'
+Export-ModuleMember -Alias "psmake"
