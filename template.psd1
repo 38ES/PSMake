@@ -59,7 +59,7 @@
 
         Debug {
             # Debug Build Target
-            # Only executed when using 'make build debug'
+            # Only executed when using 'PSMake build debug'
 
             CopyDirectory {
                'functions'

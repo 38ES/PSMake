@@ -1,12 +1,12 @@
 BeforeDiscovery {
-    Import-Module $PSScriptRoot\..\make.psd1 -Force
+    Import-Module $PSScriptRoot\..\PSMake.psd1 -Force
 }
 
 Describe 'Make-Template' {
     Context 'Is Invoked' {
         BeforeAll {
             Push-Location TestDrive:\
-            Invoke-Build template example
+            Invoke-PSMake template example
         }
         
         It "Should create a folder for the module" {

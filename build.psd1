@@ -1,5 +1,5 @@
 @{
-    ModuleName = "make"
+    ModuleName = "PSMake"
     RestoreCredential = "~\.38Nexus_psrepo_credential.json"
     DevRequiredModules = @{
         ModuleName = "Pester"
@@ -8,7 +8,7 @@
     Build = {
 
         CopyFiles {
-            'make.psd1'
+            'PSMake.psd1'
             'defaultsettings.psd1'
             'template.psd1'
         }
@@ -28,13 +28,6 @@
             Collate {
                 Get-ChildItem .\functions -Recurse -File
             }
-
-            # Removed due to code-signing requiring Smart-Card - need a soft-cert to work within Jenkins CI/CD
-            # CEIG-39
-            #CodeSign {
-            #    'make.psd1'
-            #    'make.psm1'
-            #}
         }
 
         Debug {
@@ -44,7 +37,7 @@
             }
 
             CopyFiles {
-                "make.psm1"
+                "PSMake.psm1"
             }
         }
        
@@ -71,9 +64,6 @@
     }
     
     Test = {
-        
-        #$PWSH = if($PSVersionTable.PSVersion.Major -gt 5) { "pwsh" } else { "powershell" }
-        #Start-Process $PWSH -ArgumentList @('-NoProfile', "-Command `"`$env:PSModulePath='$($env:PSModulePath)';Import-Module pester;Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-local.psd1); (Get-Module Pester).ModuleBase`"") -NoNewWindow -Wait
         if($reports) {
             Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-cicd.psd1)
         }

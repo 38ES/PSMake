@@ -1,8 +1,8 @@
 BeforeDiscovery {
-    Import-Module $PSScriptRoot/../make.psd1 -Force
+    Import-Module $PSScriptRoot\..\PSMake.psd1 -Force
 }
 
-InModuleScope 'make' {
+InModuleScope 'PSMake' {
     Describe 'GetPlatformEnvironment' {
         BeforeAll {
             $pe = GetPlatformEnvironment

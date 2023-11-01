@@ -1,10 +1,10 @@
 BeforeDiscovery {
-    Import-Module $PSScriptRoot\..\make.psd1 -Force
+    Import-Module $PSScriptRoot\..\PSMake.psd1 -Force
 }
 
-Describe 'Invoke-Build' {
+Describe 'Invoke-PSMake' {
     Context 'With build.psd1 and calling build (no other arguments)' {
-        InModuleScope 'make' {
+        InModuleScope 'PSMake' {
             BeforeAll {
                 Push-Location TestDrive:\
     
@@ -30,12 +30,12 @@ Describe 'Invoke-Build' {
                     }}
                 }
     
-                Mock 'Get-BuildSettings' { $build } -Verifiable -ModuleName make
-                Mock 'Test-Path' { $true } -ParameterFilter { $Path -eq $build.OutputDirectory -and $PathType -eq 'Container' } -ModuleName make
-                Mock 'Test-Path' { $true } -ParameterFilter { $Path -eq $build.OutputModulePath -and $PathType -eq 'Container' } -ModuleName make
-                Mock 'Test-Path' { $false } -ParameterFilter { $Path -eq $build.RestoredDependenciesPath -and $PathType -eq 'Container' } -ModuleName make
+                Mock 'Get-BuildSettings' { $build } -Verifiable -ModuleName PSMake
+                Mock 'Test-Path' { $true } -ParameterFilter { $Path -eq $build.OutputDirectory -and $PathType -eq 'Container' } -ModuleName PSMake
+                Mock 'Test-Path' { $true } -ParameterFilter { $Path -eq $build.OutputModulePath -and $PathType -eq 'Container' } -ModuleName PSMake
+                Mock 'Test-Path' { $false } -ParameterFilter { $Path -eq $build.RestoredDependenciesPath -and $PathType -eq 'Container' } -ModuleName PSMake
     
-                Invoke-Build
+                Invoke-PSMake
             }
             
     
@@ -52,12 +52,12 @@ Describe 'Invoke-Build' {
             }
     
             It "Should call test-path twice" {
-                Should -Invoke -CommandName "Test-Path" -ParameterFilter { $Path -eq $build.OutputDirectory -and $PathType -eq 'Container' } -Times 1 -ModuleName make -Scope Context
-                Should -Invoke -CommandName "Test-Path" -ParameterFilter { $Path -eq $build.OutputModulePath -and $PathType -eq 'Container' } -Times 1 -ModuleName make -Scope Context
+                Should -Invoke -CommandName "Test-Path" -ParameterFilter { $Path -eq $build.OutputDirectory -and $PathType -eq 'Container' } -Times 1 -ModuleName PSMake -Scope Context
+                Should -Invoke -CommandName "Test-Path" -ParameterFilter { $Path -eq $build.OutputModulePath -and $PathType -eq 'Container' } -Times 1 -ModuleName PSMake -Scope Context
             }
     
             It "Should call Get-BuildSettings once" {
-                Should -Invoke -CommandName "Get-BuildSettings" -Times 1 -ModuleName make -Scope Context
+                Should -Invoke -CommandName "Get-BuildSettings" -Times 1 -ModuleName PSMake -Scope Context
             }
     
             It "Should not call 'Clean'" {
