@@ -117,7 +117,7 @@ PowerShell Publish Release:
     TAG: ${TAG}
     RELEASETYPE: ${RELEASETYPE}
   trigger:
-    project: 688cw/38ceig/automation/containers/make
+    project: 688cw/38ceig/automation/containers/psmake
 
 Trigger Docker Release:
   <<: *trigger_docker
