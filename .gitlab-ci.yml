@@ -76,7 +76,7 @@ PowerShell Test Coverage:
   - pwsh -Command "Publish-Module -Path ./dist/Release/$MODULE_NAME/ -Repository \$env:POWERSHELL_REPO_NAME -NuGetApiKey \$env:POWERSHELL_REPO_APIKEY -Credential \$([pscredential]::new(\$env:POWERSHELL_REPO_USR, (ConvertTo-SecureString -String \$env:POWERSHELL_REPO_PW -AsPlainText -Force)))"
   - pwsh -Command "if (-not (Test-Path ./tag.env)) { Import-PowerShellDataFile ./dist/Release/$MODULE_NAME/$MODULE_NAME.psd1 | Select-Object -ExpandProperty ModuleVersion | % { "TAG=\$_" | Out-File tag.env -Encoding ASCII } }"
 
-PowerShell Publish Prerelease:
+Powershell Publish Prerelease:
   stage: deploy
   needs: ["PowerShell Setup", "PowerShell Build", "PowerShell Test"]
   rules:
@@ -112,7 +112,7 @@ PowerShell Publish Release:
 .trigger_docker: &trigger_docker
   stage: trigger
   trigger:
-    project: https://gitlab.90cos.cdl.af.mil/688cw/38ceig/automation/containers/make
+    project: 688cw/38ceig/automation/containers/make
 
 Trigger Docker Release:
   <<: *trigger_docker
@@ -124,4 +124,4 @@ Trigger Docker Prerelease:
   <<: *trigger_docker
   rules:
     - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'
-  needs: ["PowerShell Publish Prerelease"]
+  needs: ["Powershell Publish Prerelease"]
