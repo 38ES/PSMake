@@ -112,6 +112,9 @@ PowerShell Publish Release:
 
 .trigger_docker: &trigger_docker
   stage: trigger
+  variables:
+    TAG: $TAG
+    RELEASETYPE: $RELEASETYPE
   trigger:
     project: 688cw/38ceig/automation/containers/make
 
