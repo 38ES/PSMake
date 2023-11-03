@@ -68,6 +68,7 @@ PowerShell Test Coverage:
     
     Update-Metadata -Path ./dist/Release/$MODULE_NAME/$MODULE_NAME.psd1 -PropertyName 'PrivateData.PSData.Prerelease' -Value \$prerelease
     "TAG=\\"\$version-\$prerelease\\"" | Out-File ./tag.env -Encoding ASCII
+    "RELEASETYPE=\\"Prerelease\\"" | Out-File ./tag.env -Encoding ASCII -Append
   EOF
 
 
@@ -101,7 +102,7 @@ PowerShell Publish Release:
   script:
     - *register-repository
     - *publish-module
-    - echo "TAG=$CI_COMMIT_TAG" > tag.env
+    - echo "RELEASETYPE=Release" >> tag.env
   artifacts:
     untracked: false
     when: on_success
