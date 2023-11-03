@@ -67,15 +67,16 @@ PowerShell Test Coverage:
     \$version = Import-PowerShellDataFile ./dist/Release/$MODULE_NAME/$MODULE_NAME.psd1 | Select-Object -ExpandProperty ModuleVersion
     
     Update-Metadata -Path ./dist/Release/$MODULE_NAME/$MODULE_NAME.psd1 -PropertyName 'PrivateData.PSData.Prerelease' -Value \$prerelease
+    "TAG=\\"\$version-\$prerelease\\"" | Out-File ./tag.env -Encoding ASCII
   EOF
 
 
 .publish-module: &publish-module
   - pwsh -Command "Install-Module powershell-yaml -Force -AllowClobber"
   - pwsh -Command "Publish-Module -Path ./dist/Release/$MODULE_NAME/ -Repository \$env:POWERSHELL_REPO_NAME -NuGetApiKey \$env:POWERSHELL_REPO_APIKEY -Credential \$([pscredential]::new(\$env:POWERSHELL_REPO_USR, (ConvertTo-SecureString -String \$env:POWERSHELL_REPO_PW -AsPlainText -Force)))"
+  - pwsh -Command "if (-not (Test-Path ./tag.env)) { Import-PowerShellDataFile ./dist/Release/$MODULE_NAME/$MODULE_NAME.psd1 | Select-Object -ExpandProperty ModuleVersion | % { "TAG=\$_" | Out-File tag.env -Encoding ASCII } }"
 
-
-Powershell Publish Prerelease:
+PowerShell Publish Prerelease:
   stage: deploy
   needs: ["PowerShell Setup", "PowerShell Build", "PowerShell Test"]
   rules:
@@ -84,6 +85,13 @@ Powershell Publish Prerelease:
     - *set-export-prerelease
     - *register-repository
     - *publish-module
+  artifacts:
+    untracked: false
+    when: on_success
+    expire_in: "30 days"
+    reports:
+      dotenv: tag.env
+    
 
 PowerShell Publish Release:
   stage: deploy
@@ -93,25 +101,23 @@ PowerShell Publish Release:
   script:
     - *register-repository
     - *publish-module
+    - echo "TAG=$CI_COMMIT_TAG" > tag.env
+  artifacts:
+    untracked: false
+    when: on_success
+    expire_in: "30 days"
+    reports:
+      dotenv: tag.env
 
-# Docker build job template used for making seperate jobs for Release and PreRelease
-.build-docker: &build-docker
-  image:
-    name: quay.io/buildah/stable
-  variables:
-    STORAGE_DRIVER: vfs
-  before_script:
-    - cp /etc/gitlab-runner/certs/ca.crt /etc/pki/ca-trust/source/anchors/
-    - update-ca-trust enable
-    - update-ca-trust extract
-    - buildah login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-  script:
-    - buildah bud -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" --format docker .
-    - buildah push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
+.trigger_docker: &trigger_docker
+  stage: trigger
+  trigger:
+    project: https://gitlab.90cos.cdl.af.mil/688cw/38ceig/automation/containers/make
 
-Build And Publish Docker Image:
-  stage: deploy-docker
-  rules:
-    - if: '$CI_COMMIT_TAG'
-  needs: ['PowerShell Publish Release']
-  <<: *build-docker
+Trigger Docker Release:
+  <<: *trigger_docker
+  needs: ["PowerShell Publish Release"]
+
+Trigger Docker Prerelease:
+  <<: *trigger_docker
+  needs: ["PowerShell Publish Prerelease"]
