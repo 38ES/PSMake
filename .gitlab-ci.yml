@@ -67,8 +67,8 @@ PowerShell Test Coverage:
     \$version = Import-PowerShellDataFile ./dist/Release/$MODULE_NAME/$MODULE_NAME.psd1 | Select-Object -ExpandProperty ModuleVersion
     
     Update-Metadata -Path ./dist/Release/$MODULE_NAME/$MODULE_NAME.psd1 -PropertyName 'PrivateData.PSData.Prerelease' -Value \$prerelease
-    "TAG=\\"\$version-\$prerelease\\"" | Out-File ./tag.env -Encoding ASCII
-    "RELEASETYPE=\\"Prerelease\\"" | Out-File ./tag.env -Encoding ASCII -Append
+    "TAG=\`"\$version-\$prerelease\`"" | Out-File ./tag.env -Encoding ASCII
+    "RELEASETYPE=\`"Prerelease\`"" | Out-File ./tag.env -Encoding ASCII -Append
   EOF
 
 
@@ -86,6 +86,7 @@ Powershell Publish Prerelease:
     - *set-export-prerelease
     - *register-repository
     - *publish-module
+    - cat tag.env
   artifacts:
     untracked: false
     when: on_success
@@ -103,6 +104,7 @@ PowerShell Publish Release:
     - *register-repository
     - *publish-module
     - echo "RELEASETYPE=Release" >> tag.env
+    - cat tag.env
   artifacts:
     untracked: false
     when: on_success
@@ -113,8 +115,8 @@ PowerShell Publish Release:
 .trigger_docker: &trigger_docker
   stage: trigger
   variables:
-    TAG: "${TAG}"
-    RELEASETYPE: "${RELEASETYPE}"
+    TAG: ${TAG}
+    RELEASETYPE: ${RELEASETYPE}
   trigger:
     project: 688cw/38ceig/automation/containers/make
 
@@ -122,7 +124,9 @@ Trigger Docker Release:
   <<: *trigger_docker
   rules:
     - if: "$CI_COMMIT_TAG"
-  needs: ["PowerShell Publish Release"]
+  needs:
+    - job: "PowerShell Publish Release"
+      artifacts: true
 
 Trigger Docker Prerelease:
   <<: *trigger_docker
