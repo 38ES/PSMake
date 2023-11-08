@@ -2,3 +2,18 @@ include:
   - project: 688cw/38ceig/automation/ci-cd-templates
     ref: feature/Powershellv2-Template
     file: PowerShell/PowerShell-v2.gitlab-ci.yml
+
+Trigger Docker:
+  stage: publish
+  needs:
+    - job: PowerShell Setup
+      artifacts: true
+    - job: PowerShell Publish
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  variables:
+    TAG: ${TAG}
+    RELEASETYPE: ${RELEASETYPE}
+  trigger:
+    project: 688cw/38ceig/automation/containers/psmake
