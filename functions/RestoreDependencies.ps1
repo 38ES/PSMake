@@ -1,6 +1,8 @@
 using namespace System.IO
 
 function RestoreDependencies {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'AllowPrerelease', Justification = 'Used in a ForEach-Object scriptblock')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'Credential', Justification = 'Used in a ForEach-Object scriptblock')]
     [CmdletBinding()]
     param(
         $RequiredModules = (Import-PowerShellDataFile "$($settings.ModuleName).psd1").RequiredModules,
@@ -16,7 +18,7 @@ function RestoreDependencies {
     }
 
     Write-Verbose "Getting credential"
-        
+
     # Ensure dependencies are installed before importing the module
     Write-Verbose "Restoring Dependencies..."
     $RequiredModules | ForEach-Object {
@@ -37,15 +39,15 @@ function RestoreDependencies {
         if ($PSBoundParameters.ContainsKey("AllowPrerelease")) {
             $moduleInfo.Add("AllowPrerelease", $AllowPrerelease)
         }
-        
+
         $moduleInfo.Add("ErrorAction", "Stop")
-        
+
         if($Credential) {
             $moduleInfo.Add("Credential", $Credential)
         }
-       
+
         Write-Verbose "Restoring Module '$($moduleInfo.Name)'$(if($moduleInfo.RequiredVersion) { ", RequiredVersion = $($moduleInfo.RequiredVersion)"})$(if($moduleInfo.MinimumVersion) { ", MinimumVersion = $($moduleInfo.MinimumVersion)"})$(if($Credential) { " using username $($Credential.UserName)" })"
-        $foundModule = Find-Module @moduleInfo | Select -First 1
+        $foundModule = Find-Module @moduleInfo | Select-Object -First 1
         $installedModulePath = [Path]::Combine($OutputDirectory, $foundModule.Name, $foundModule.Version.Split('-')[0])
         $installedModuleInfoPath = [Path]::Combine($installedModulePath, 'PSGetModuleInfo.xml')
 
@@ -76,4 +78,3 @@ function RestoreDependencies {
         Write-Verbose "Using Module - $($foundModule.Name) $($foundModule.Version)"
     }
 }
-

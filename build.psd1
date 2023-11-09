@@ -31,7 +31,7 @@
         }
 
         Debug {
-            
+
             CopyDirectory {
                 'functions'
             }
@@ -40,7 +40,7 @@
                 "PSMake.psm1"
             }
         }
-       
+
     }
     Clean = {
         if(test-path $settings.OutputDirectory) { remove-item $settings.OutputDirectory -Recurse }
@@ -62,7 +62,7 @@
         import-module PowerShellGet -RequiredVersion 2.2.5
         Publish-Module @args1
     }
-    
+
     Test = {
         if($reports) {
             Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-cicd.psd1)

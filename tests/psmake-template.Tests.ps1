@@ -8,7 +8,7 @@ Describe 'Make-Template' {
             Push-Location TestDrive:\
             Invoke-PSMake template example
         }
-        
+
         It "Should create a folder for the module" {
             (test-path .\example -PathType Container) | Should -BeTrue
         }
@@ -40,6 +40,5 @@ Describe 'Make-Template' {
         AfterAll {
             Pop-Location
         }
-        
     }
 }

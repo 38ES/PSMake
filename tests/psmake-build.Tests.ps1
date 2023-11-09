@@ -1,3 +1,6 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments','', Justification = 'Pester Tests use variables outside standard scope')]
+param()
+
 BeforeDiscovery {
     Import-Module $PSScriptRoot\..\PSMake.psd1 -Force
 }
@@ -14,7 +17,7 @@ Describe 'Make-Build' {
 "@
 
             # Arrange
-            
+
             $fileContents | Out-File TestDrive:\build.psd1
             Push-Location TestDrive:\
 
@@ -35,7 +38,7 @@ Describe 'Make-Build' {
         AfterAll {
             Pop-Location
         }
-        
+
     }
 
     Context 'Without build.psd1' {
@@ -47,7 +50,7 @@ Describe 'Make-Build' {
         It "Should throw an exception" {
              { Invoke-PSMake } | Should -Throw "No build.psd1 file found!"
         }
-        
+
         AfterAll {
             Pop-Location
         }

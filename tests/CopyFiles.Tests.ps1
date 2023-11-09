@@ -15,9 +15,8 @@ InModuleScope 'PSMake' {
                     $script:pathToResolve = $Path
                     $script:resolvedCalled = $true
                 } -ParameterFilter { $Path }
-                
+
                 Mock Get-ChildItem { [pscustomobject]@{FullName = "myfakefile.txt"} }
-                
                 Mock Copy-Item { $script:copyTo = $Destination }
             }
 
@@ -35,7 +34,6 @@ InModuleScope 'PSMake' {
                 $output | Should -BeNullOrEmpty
                 $script:copyTo | Should -Be (Join-Path $settings.OutputModulePath "fake\output\path")
             }
-
         }
     }
 }

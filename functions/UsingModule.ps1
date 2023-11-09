@@ -12,8 +12,6 @@ function UsingModule {
     } | ForEach-Object {
         "using module `"$_`"`r`n"
     }
-        
-    
 
     if(-not (Test-Path $OutputDirectory -PathType Container)) { New-Item $OutputDirectory -ItemType Directory | Out-Null }
     if(-not (Test-Path $settings.OutputModulePath -PathType Container)) { New-Item $settings.OutputModulePath -ItemType Directory | Out-Null }

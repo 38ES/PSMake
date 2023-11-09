@@ -1,3 +1,6 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments','', Justification = 'Pester Tests use variables outside standard scope')]
+param()
+
 BeforeDiscovery {
     Import-Module $PSScriptRoot\..\PSMake.psd1 -Force
 }
@@ -28,7 +31,7 @@ Describe 'Make-Publish' {
             $output | Should -Be "Published with: "
         }
     }
-    
+
     Context 'Is Invoked With Args' {
         BeforeAll {
             $output = Invoke-PSMake publish 'myApiKey'
