@@ -1,6 +1,6 @@
 include:
   - project: 688cw/38ceig/automation/ci-cd-templates
-    ref: feature/Powershellv2-Template
+    ref: main
     file: PowerShell/PowerShell-v2.gitlab-ci.yml
 
 Trigger Docker:
