@@ -36,6 +36,7 @@ function RestoreDependencies {
                 $moduleInfo.Add("RequiredVersion", $module.RequiredVersion)
             }
         }
+
         if ($PSBoundParameters.ContainsKey("AllowPrerelease")) {
             $moduleInfo.Add("AllowPrerelease", $AllowPrerelease)
         }
@@ -46,33 +47,39 @@ function RestoreDependencies {
             $moduleInfo.Add("Credential", $Credential)
         }
 
-        Write-Verbose "Restoring Module '$($moduleInfo.Name)'$(if($moduleInfo.RequiredVersion) { ", RequiredVersion = $($moduleInfo.RequiredVersion)"})$(if($moduleInfo.MinimumVersion) { ", MinimumVersion = $($moduleInfo.MinimumVersion)"})$(if($Credential) { " using username $($Credential.UserName)" })"
-        $foundModule = Find-Module @moduleInfo | Select-Object -First 1
-        $installedModulePath = [Path]::Combine($OutputDirectory, $foundModule.Name, $foundModule.Version.Split('-')[0])
-        $installedModuleInfoPath = [Path]::Combine($installedModulePath, 'PSGetModuleInfo.xml')
+        $cachedModuleInfo = @{
+            PSModuleDirectory = $OutputDirectory
+        }
 
-        if (-not (test-path $installedModuleInfoPath) -or $foundModule.Version -ne ((Import-CliXml $installedModulePath\PSGetModuleInfo.xml)).Version) {
+        $module.Keys | ForEach-Object { $cachedModuleInfo.Add($_, $module[$_]) }
 
-            Write-Verbose "Module $($foundModule.Name) ($($foundModule.Version)) not installed... installing."
-            $SaveArgs = @{
-                Name = $foundModule.Name
-                Path = $OutputDirectory
-                RequiredVersion = $foundModule.Version.ToString()
-                Repository = $foundModule.Repository
-                ErrorAction = 'Stop'
-                Force = $true
-            }
-            if ($AllowPrerelease) {
-                $SaveArgs.Add("AllowPrerelease", $AllowPrerelease)
-            }
-            if ($Credential) {
-                $SaveArgs.Add("Credential", $Credential)
-            }
-            Save-Module @SaveArgs
+        $foundModule = GetRestoredDependency @cachedModuleInfo
 
-            # This is a workaround for Pester tests not able to use C# types of imported binaries from the saved module
-            #$importPath = [Path]::Combine($OutputDirectory, $foundModule.Name, $foundModule.Version.Split('-')[0], "$($foundModule.Name).psd1")
-            #Import-Module $importPath -Force -Global
+        if ($null -eq $foundModule) {
+            Write-Verbose "Restoring Module '$($moduleInfo.Name)'$(if($moduleInfo.RequiredVersion) { ", RequiredVersion = $($moduleInfo.RequiredVersion)"})$(if($moduleInfo.MinimumVersion) { ", MinimumVersion = $($moduleInfo.MinimumVersion)"})$(if($Credential) { " using username $($Credential.UserName)" })"
+            $foundModule = Find-Module @moduleInfo | Select-Object -First 1
+            $installedModulePath = [Path]::Combine($OutputDirectory, $foundModule.Name, $foundModule.Version.Split('-')[0])
+            $installedModuleInfoPath = [Path]::Combine($installedModulePath, 'PSGetModuleInfo.xml')
+
+            if (-not (test-path $installedModuleInfoPath) -or $foundModule.Version -ne ((Import-CliXml $installedModulePath\PSGetModuleInfo.xml)).Version) {
+
+                Write-Verbose "Module $($foundModule.Name) ($($foundModule.Version)) not installed... installing."
+                $SaveArgs = @{
+                    Name = $foundModule.Name
+                    Path = $OutputDirectory
+                    RequiredVersion = $foundModule.Version.ToString()
+                    Repository = $foundModule.Repository
+                    ErrorAction = 'Stop'
+                    Force = $true
+                }
+                if ($AllowPrerelease) {
+                    $SaveArgs.Add("AllowPrerelease", $AllowPrerelease)
+                }
+                if ($Credential) {
+                    $SaveArgs.Add("Credential", $Credential)
+                }
+                Save-Module @SaveArgs
+            }
         }
 
         Write-Verbose "Using Module - $($foundModule.Name) $($foundModule.Version)"
