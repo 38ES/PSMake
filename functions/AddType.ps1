@@ -1,4 +1,5 @@
 function AddType {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'Base64Encode', Justification='Used in ForEach-Object call')]
     param(
         [scriptblock]$Scriptblock,
         [string]$OutputDirectory = $settings.OutputDirectory,
@@ -20,7 +21,6 @@ function AddType {
         } else {
             "Add-Type -TypeDefinition @'`r`n$scriptblockText`r`n'@`r`n"
         }
-        
     }
 
     if(-not (Test-Path $OutputDirectory -PathType Container)) { New-Item $OutputDirectory -ItemType Directory | Out-Null }

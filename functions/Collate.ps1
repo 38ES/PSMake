@@ -1,4 +1,5 @@
 function Collate {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSReviewUnusedParameter", 'Base64Encode', Justification = "Used in ForEach-Object scriptblock")]
     param(
         [scriptblock]$Scriptblock,
         [string]$OutputDirectory = $settings.OutputDirectory,
@@ -20,7 +21,6 @@ function Collate {
         } else {
             ". ([scriptblock]::Create(@'`r`n$scriptblockText`r`n'@))`r`n"
         }
-        
     }
 
     if(-not (Test-Path $OutputDirectory -PathType Container)) { New-Item $OutputDirectory -ItemType Directory | Out-Null }

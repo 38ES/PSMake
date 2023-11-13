@@ -7,7 +7,6 @@ function Invoke-PSMake {
         $Remaining
     )
 
-    
     switch($Command) {
 
         "template" {
@@ -15,7 +14,7 @@ function Invoke-PSMake {
             if(-not (test-path ".\$ModuleName" -PathType Container)) { New-Item .\$ModuleName -ItemType Directory | Out-Null }
             if(-not (test-path ".\$ModuleName\functions" -PathType Container)) { New-Item .\$ModuleName\functions -ItemType Directory | Out-Null }
             if(-not (test-path ".\$ModuleName\tests" -PathType Container)) { New-Item .\$ModuleName\tests -ItemType Directory | Out-Null }
-            
+
             'Get-ChildItem $PSScriptRoot\functions\ -File -Recurse | ForEach-Object { . $_.FullName }' | Out-File ".\$("$ModuleName\$ModuleName").psm1" -Encoding UTF8
             $dom = $env:userdomain
             $usr = $env:username
@@ -24,7 +23,7 @@ function Invoke-PSMake {
             } catch {
                 $author = "$usr$(if($dom) { "@$dom" })"
             }
-            
+
             if(-not (test-path ".\$ModuleName\$ModuleName.psd1" -PathType Leaf)) { New-ModuleManifest -Path ".\$ModuleName\$ModuleName.psd1" -CompanyName "USAF, 38 CEIG/ES" -Copyright "GOTS" -RootModule "$ModuleName.psm1" -ModuleVersion "1.0.0.0" -Author $author }
             (Get-Content "$($MyInvocation.MyCommand.Module.ModuleBase)\template.psd1").Replace("%%MODULENAME%%", $ModuleName) | Out-File ".\$ModuleName\build.psd1"
             Copy-Item "$($MyInvocation.MyCommand.Module.ModuleBase)\Pester5Configuration-local.psd1" ".\$ModuleName\Pester5Configuration-local.psd1"
@@ -35,7 +34,7 @@ function Invoke-PSMake {
             $buildData = Get-BuildSettings .\build.psd1 -RemainingArgs $Remaining
             $settings = @{}
             $buildData.Keys | Where-Object { -not ($_ -in "build","clean","test","template","publish")  } | ForEach-Object { $settings[$_] = $buildData[$_] }
-            
+
         }
 
         { $_ -in "","build" } {
@@ -57,6 +56,57 @@ function Invoke-PSMake {
             throw "Undefined command '$Command'"
         }
     }
+
+    <#
+        .SYNOPSIS
+        Invokes the PSMake project management tool based on given parameter (defaults to build release)
+
+        .DESCRIPTION
+        Builds a PSMake structured project in the current directory based on the build.psd1 file (build, test, clean, plublish)
+        or creates the project structure with default settings (template)
+
+        .PARAMETER Command
+        Specifies the action to take (build, test, clean, publish, template)
+
+        .PARAMETER Remaining
+        The remaining arguments to send to the corresponding action (build, test, clean, publish, template)
+
+        .INPUTS
+        None. Piping unavailable.
+
+        .OUTPUTS
+        None. Affects project outputs and runs other test scripts based on the build.psd1 file.
+
+        .EXAMPLE
+        PS> PSMake
+        # builds a release version of the module specified within build.psd1
+
+        PS> PSMake build release
+        # same as above, but explicit
+
+        .EXAMPLE
+        PS> PSMake build debug
+        # builds the debug version of the module as specified within the build.psd1 Build property-script
+
+        .EXAMPLE
+        PS> PSMake clean
+        # runs the 'Clean' property-script within build.psd1 (deletes the dist/ folder by default)
+
+        .EXAMPLE
+        PS> PSMake test
+        # runs the 'Test' property-script within the build.psd1 file
+
+        PS> PSMake test reports
+        # runs the 'Test' property-script within the build.psd1 file and passes "reports" value as a parameter to it.
+
+        .EXAMPLE
+        PS> PSMake publish
+        # runs the 'Publish' property-script within the build.psd1 file
+
+        .EXAMPLE
+        PS> PSMake template
+        # Initializes a new PSMake project with templated build.psd1, module file, module manifest, specialized folders
+    #>
 }
 
 New-Alias -Name "psmake" Invoke-PSMake -ErrorAction SilentlyContinue

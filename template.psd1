@@ -7,7 +7,7 @@
     # REQUIRED - Name of module
     ###
     ModuleName = '%%MODULENAME%%'
-    
+
     ###
     # OPTIONAL - Directory to put the built powershell module
     # DEFAULT IS .\dist
@@ -48,7 +48,7 @@
     #DevRequiredModules = ''
 
     ##
-    # REQUIRED - Script to build the module 
+    # REQUIRED - Script to build the module
     ##
     Build = {
 
@@ -119,6 +119,7 @@
     # REQUIRED - Script to run the unit tests for the module
     ##
     Test = {
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'Target', Justification = 'Will be used later')]
         param(
             [Parameter(Position=0)]
             [string]$Target

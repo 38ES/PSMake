@@ -1,10 +1,10 @@
 using namespace System.IO
 
 function GetRestoreCredential {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConverttoSecureStringWithPlainText', '', Justification = '-AsPlainText is required on *nix systems')]
     [CmdletBinding()]
-    param(
-        
-    )
+    [OutputType([PSCredential])]
+    param()
 
     # Environment wins ALWAYS
     if ($env:POWERSHELL_REPO_USR -and $env:POWERSHELL_REPO_PW) {
@@ -22,14 +22,14 @@ function GetRestoreCredential {
             return $output
         }
         elseif ($settings.RestoreCredential -is [string]) {
-            
+
             # Configured Path
             if (-not (test-path $settings.RestoreCredential -PathType Leaf)) {
                 throw "RestoreCredential path '$($settings.RestoreCredential)' does not exist or is not a file!"
             }
 
             [FileInfo]$fileInfo = [FileInfo]::new($settings.RestoreCredential)
-            
+
             $obj = switch($fileInfo.Extension.ToLower()) {
                 ".json" {
                     Get-Content $settings.RestoreCredential -Raw | ConvertFrom-Json -ErrorAction Stop
@@ -44,11 +44,11 @@ function GetRestoreCredential {
 
             $usernameProperty = $obj.PSObject.Properties.Match("UserName")
             $passwordProperty = $obj.PSObject.Properties.Match("Password")
-            
+
             if ($null -eq $usernameProperty -or $null -eq $passwordProperty) {
                 throw "RestoreCredential in file '$($settings.RestoreCredential)' missing required username and password properties!"
             }
-            
+
             return [pscredential]::new($usernameProperty.Value, (ConvertTo-SecureString -String $passwordProperty.Value -AsPlainText -Force))
         }
         elseif ($settings.RestoreCredential -is [PSCredential]) {
@@ -58,7 +58,7 @@ function GetRestoreCredential {
             throw 'Restore Credential is not a factory, file path, or PSCredential!'
         }
     }
-    
+
     # Default - $null
     return $null
 }

@@ -5,8 +5,8 @@ function CopyFiles {
         [scriptblock]$ScriptBlock,
         [string]$To = $settings.OutputModulePath
     )
-    
-    if($To -ne $settings.OutputModulePath -and -not (Split-Path $To -IsAbsolute)) { 
+
+    if($To -ne $settings.OutputModulePath -and -not (Split-Path $To -IsAbsolute)) {
         $To = Join-Path $settings.OutputModulePath $To
     }
 
@@ -21,5 +21,4 @@ function CopyFiles {
     } | ForEach-Object {
         Copy-Item $_.FullName $To
     }
-    
 }

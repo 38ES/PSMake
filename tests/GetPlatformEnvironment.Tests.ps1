@@ -1,3 +1,6 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = 'Pester Tests use variables outside of normal scopes')]
+param()
+
 BeforeDiscovery {
     Import-Module $PSScriptRoot\..\PSMake.psd1 -Force
 }

@@ -10,5 +10,4 @@ function GetPlatformEnvironment {
         OSVersionString = $OS.VersionString
         PSVersion = [Version]($PSVersionTable.PSVersion)
     }
-    
 }

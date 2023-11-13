@@ -6,7 +6,7 @@ function CopyDirectory {
         [string]$To = $settings.OutputModulePath
     )
 
-    if($To -ne $settings.OutputModulePath -and -not (Split-Path $To -IsAbsolute)) { 
+    if($To -ne $settings.OutputModulePath -and -not (Split-Path $To -IsAbsolute)) {
         $To = Join-Path $settings.OutputModulePath $To
     }
 
@@ -17,7 +17,6 @@ function CopyDirectory {
             } else {
                 (Join-Path $PWD.Path $_)
             }
-            
         } elseif($_ -is [DirectoryInfo]) {
             $_.FullName
         } else {
