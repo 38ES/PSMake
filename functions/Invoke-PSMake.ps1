@@ -70,27 +70,55 @@ function Invoke-PSMake {
     }
 
     Process{
+        $PSBoundParameters.Keys | ForEach-Object { Write-Verbose "Bound Parameter: $_ = $($PSBoundParameters[$_])" }
         switch($Command) {
 
             "template" {
-                $ModuleName = $PSBoundParameters["ProjectName"]
-                if(-not (test-path ".\$ModuleName" -PathType Container)) { New-Item .\$ModuleName -ItemType Directory | Out-Null }
-                if(-not (test-path ".\$ModuleName\functions" -PathType Container)) { New-Item .\$ModuleName\functions -ItemType Directory | Out-Null }
-                if(-not (test-path ".\$ModuleName\tests" -PathType Container)) { New-Item .\$ModuleName\tests -ItemType Directory | Out-Null }
+                $path = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($PSBoundParameters["ProjectName"])
+                $name = Split-Path $path -Leaf
+                Write-Verbose "Project Directory: $path"
+                Write-Verbose "Project Name: $name"
 
-                'Get-ChildItem $PSScriptRoot\functions\ -File -Recurse | ForEach-Object { . $_.FullName }' | Out-File ".\$("$ModuleName\$ModuleName").psm1" -Encoding UTF8
+                if (-not (Test-Path $path -PathType Container)) {
+                    Write-Verbose "Creating $path"
+                    New-Item -Path $path -ItemType Directory -Force | Out-Null
+                }
+
+                if (-not (test-path (Join-Path $path "functions") -PathType Container)) {
+                    Write-Verbose "Creating $(Join-Path $path "functions")"
+                    New-Item -Path (Join-Path $path "functions") -ItemType Directory -Force | Out-Null
+                }
+
+                if (-not (test-path (Join-Path $path "tests") -PathType Container)) {
+                    Write-Verbose "Creating $(Join-Path $path "tests")"
+                    New-Item -Path (Join-Path $path "tests") -ItemType Directory | Out-Null
+                }
+
+                Write-Verbose "Generating $(Join-Path $path "$name.psm1")"
+                'Get-ChildItem $PSScriptRoot\functions\ -File -Recurse | ForEach-Object { . $_.FullName }' | Out-File (Join-Path $path "$name.psm1") -Encoding ASCII
+
                 $dom = $env:userdomain
                 $usr = $env:username
+
                 try {
+                    Write-Verbose "Getting user full name from active directory - User - $usr, Domain -$dom"
                     $author = ([adsi]"WinNT://$dom/$usr,user").fullname.ToString()
                 } catch {
                     $author = "$usr$(if($dom) { "@$dom" })"
+                    Write-Verbose "Failed, using author '$author'"
                 }
 
-                if(-not (test-path ".\$ModuleName\$ModuleName.psd1" -PathType Leaf)) { New-ModuleManifest -Path ".\$ModuleName\$ModuleName.psd1" -CompanyName "USAF, 38 CEIG/ES" -Copyright "GOTS" -RootModule "$ModuleName.psm1" -ModuleVersion "1.0.0.0" -Author $author }
-                (Get-Content "$($MyInvocation.MyCommand.Module.ModuleBase)\template.psd1").Replace("%%MODULENAME%%", $ModuleName) | Out-File ".\$ModuleName\build.psd1"
-                Copy-Item "$($MyInvocation.MyCommand.Module.ModuleBase)\Pester5Configuration-local.psd1" ".\$ModuleName\Pester5Configuration-local.psd1"
-                Copy-Item "$($MyInvocation.MyCommand.Module.ModuleBase)\Pester5Configuration-cicd.psd1" ".\$ModuleName\Pester5Configuration-cicd.psd1"
+                if(-not (test-path (Join-Path $path "$name.psd1") -PathType Leaf)) {
+                    Write-Verbose "Generating manifest $(Join-Path $path "$name.psd1")"
+                    New-ModuleManifest -Path (Join-Path $path "$name.psd1") -CompanyName "USAF, 38 CEIG/ES" -Copyright "GOTS" -RootModule "$name.psm1" -ModuleVersion "1.0.0.0" -Author $author
+                }
+
+                Write-Verbose "Generating $(Join-Path $path "build.psd1")"
+                (Get-Content "$($MyInvocation.MyCommand.Module.ModuleBase)\template.psd1").Replace("%%MODULENAME%%", $name) | Out-File (Join-Path $path "build.psd1")
+
+                Write-Verbose "Copying Pester5Configuration-local.psd1 and Pester5Configuration-cicd.psd1"
+                Copy-Item "$($MyInvocation.MyCommand.Module.ModuleBase)\Pester5Configuration-local.psd1" (Join-Path $path "Pester5Configuration-local.psd1")
+                Copy-Item "$($MyInvocation.MyCommand.Module.ModuleBase)\Pester5Configuration-cicd.psd1" (Join-Path $path "Pester5Configuration-cicd.psd1")
             }
 
             {$_ -ne "template" } {
