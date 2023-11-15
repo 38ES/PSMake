@@ -5,7 +5,7 @@ function Get-BuildSettings {
     [OutputType([Hashtable])]
     param(
         [string]$BuildFilePath,
-        [string[]]$RemainingArgs
+        [string]$BuildTarget
     )
 
     if(-not (test-path $BuildFilePath)) { throw "No $($BuildFilePath.Substring(2)) file found!" }
@@ -22,8 +22,8 @@ function Get-BuildSettings {
         $buildSettings[$asConfiguredKey] = $buildSettingsAsConfigured[$asConfiguredKey]
     }
 
-    $buildSettings["BuildTarget"] = if($RemainingArgs -gt 0) {
-        $RemainingArgs[0]
+    $buildSettings["BuildTarget"] = if($PSBoundParameters.ContainsKey("BuildTarget")) {
+        $BuildTarget
     } elseif($buildSettings.ContainsKey("DefaultBuildTarget")) {
         $buildSettings["DefaultBuildTarget"]
     } else {
@@ -35,6 +35,13 @@ function Get-BuildSettings {
     if(-not $buildSettingsAsConfigured.ContainsKey("OutputModulePath")) {
         $buildSettings.Add("OutputModulePath", (Join-Path $buildSettings["BuildTargetPath"] $buildSettings["ModuleName"]))
     }
+
+    $credential = GetBuildCredential -Settings $buildSettings
+    Write-Verbose "Credential - $credential"
+    if ($credential) {
+        $buildSettings.Credential = $credential
+    }
+
     # Check for required parameters
     Validate-BuildSettings $buildSettings
     $buildSettings

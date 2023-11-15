@@ -8,7 +8,7 @@ function RestoreDependencies {
         $RequiredModules = (Import-PowerShellDataFile "$($settings.ModuleName).psd1").RequiredModules,
         $OutputDirectory = ".dependencies",
         $AllowPrerelease = $false,
-        [pscredential]$Credential = (GetRestoreCredential)
+        [pscredential]$Credential = $settings.Credential
     )
 
     if (-not $RequiredModules) { return }
@@ -16,8 +16,6 @@ function RestoreDependencies {
     if (-not (test-path $OutputDirectory)) {
         new-item -Path $OutputDirectory -ItemType Directory | Out-Null
     }
-
-    Write-Verbose "Getting credential"
 
     # Ensure dependencies are installed before importing the module
     Write-Verbose "Restoring Dependencies..."

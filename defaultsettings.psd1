@@ -1,5 +1,5 @@
 @{
     OutputDirectory = ".\dist"
     RestoredDependenciesPath = '.dependencies'
-    RestoreCredential = $null
+    Credential = $null
 }

@@ -51,7 +51,10 @@ Description = 'Used to build powershell modules for distribution'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @(@{ ModuleName = "PowerShellGet"; ModuleVersion = "2.2.5" })
+RequiredModules = @(
+    @{ ModuleName = "PowerShellGet"; ModuleVersion = "2.2.5" },
+    @{ ModuleName = "Configuration"; ModuleVersion = "1.5.0" }
+)
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @('netstandard.dll')
