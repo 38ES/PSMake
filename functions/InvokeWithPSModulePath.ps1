@@ -36,8 +36,8 @@ function InvokeWithPSModulePath {
 
         $ps.Invoke()
 
-        if($ps.HasErrors) {
-            $ps.Streams.Error | ForEach-Object { Write-Error $_ }
+        if($ps.HadErrors) {
+            $ps.Streams.Error | ForEach-Object { Write-Error $_; $_.InvocationInfo.PositionMessage }
         }
     }
     finally {

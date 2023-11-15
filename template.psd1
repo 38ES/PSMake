@@ -33,7 +33,7 @@
     # OPTIONAL - Restore dependency credential
     # DEFAULT IS $null
     # Can be a PSCredential type, path, or factory scriptblock that returns a PSCredential
-    #RestoreCredential = $null
+    #Credential = $null
 
     ###
     # OPTIONAL - Specifies PowerShell module required for Development
