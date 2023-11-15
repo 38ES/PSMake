@@ -72,7 +72,7 @@ The workflow keys are ```Build```, ```Clean```, ```Test```, and ```Publish``` wi
 #### Special Commands
 | Command | Description | Example |
 | :------ | :---------- | :------ |
-| Add-Type | | |
+| AddType | Adds a C# file using Add-Type to the psm1 file  | <code>AddType {<br>&nbsp; 'classes/MyClass.cs'<br>}</code> |
 | CodeSign | Code signs the returns files from the given scriptblock | <code>CodeSign {<br>&nbsp; 'file1'<br>&nbsp; 'file2'<br>}<br></code> |
 | Collate | Brings multiple function ps1 files into a single psm1 file | <code>Collate {<br>&nbsp; './functions/file1.ps1'<br>&nbsp; './functions/file2.ps1'<br>}</code> |
 | CopyDirectory | Copies directories into the distribution folder | <code>CopyDirectory {<br>&nbsp; './functions'<br>}</code> |
