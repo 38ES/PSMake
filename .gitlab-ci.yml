@@ -23,12 +23,12 @@ PowerShell Publish:
       $manifestPath = $env:MANIFEST_PATH
       $moduleDir = [System.IO.Path]::GetDirectoryName($manifestPath)
       $moduleVersion = $env:MODULE_VERSION
-      $releaseType = if (-not $env:CI_COMMIT_TAG) { "Release" } else { "Prerelease" }
+      $releaseType = if (-not $env:CI_COMMIT_TAG) { "Prerelease" } else { "Release" }
 
       psmake publish $env:POWERSHELL_REPO_APIKEY $releaseType
 
       $version = if ($releaseType -eq "Prerelease") {
-        $manifest = Import-PowerShellDataFile "./dist/Prelease/$moduleName/$moduleName.psd1"
+        $manifest = Import-PowerShellDataFile "./dist/Prerelease/$moduleName/$moduleName.psd1"
         $prereleaseTag = $manifest.PrivateData.PSData.Prerelease
         "$moduleVersion-$prereleaseTag"
       } else {
