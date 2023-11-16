@@ -3,42 +3,6 @@ include:
     ref: main
     file: PowerShell/PowerShell-v2.gitlab-ci.yml
 
-PowerShell Build & Test:
-  script:
-    - |
-      pwsh -File /opt/cicd.ps1 << "EOF"
-      $buildTarget = if (-not $env:CI_COMMIT_TAG) { "Prerelease" } else { "Release" }
-      psmake clean -Verbose
-      psmake build $buildTarget -Verbose
-      psmake test reports -Verbose
-      EOF
-
-PowerShell Publish:
-  script:
-    - |
-      pwsh -File /opt/cicd.ps1 << "EOF"
-
-      $moduleName = $env:MODULE_NAME
-      $outputDirectoryPath = $env:OUTPUT_DIRECTORY
-      $manifestPath = $env:MANIFEST_PATH
-      $moduleDir = [System.IO.Path]::GetDirectoryName($manifestPath)
-      $moduleVersion = $env:MODULE_VERSION
-      $releaseType = if (-not $env:CI_COMMIT_TAG) { "Prerelease" } else { "Release" }
-
-      psmake publish $env:POWERSHELL_REPO_APIKEY $releaseType
-
-      $version = if ($releaseType -eq "Prerelease") {
-        $manifest = Import-PowerShellDataFile "./dist/Prerelease/$moduleName/$moduleName.psd1"
-        $prereleaseTag = $manifest.PrivateData.PSData.Prerelease
-        "$moduleVersion-$prereleaseTag"
-      } else {
-        $moduleVersion
-      }
-
-      "TAG=$version" > ./release.env
-      "RELEASETYPE=$releaseType" >> ./release.env
-      "RELEASEURL=$($env:POWERSHELL_REPO_URL)$moduleName/$version" >> release.env
-
 Trigger Docker:
   stage: publish
   needs:
