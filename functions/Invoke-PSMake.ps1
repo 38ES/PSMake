@@ -1,6 +1,6 @@
 using namespace System.Management.Automation
 using namespace System.Collections.ObjectModel
-
+using namespace System
 
 function Invoke-PSMake {
     [CmdletBinding()]
@@ -12,8 +12,8 @@ function Invoke-PSMake {
     DynamicParam {
 
         if ($Command -eq 'template') {
-            $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
-            $attributeCollection = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+            $paramDictionary = [RuntimeDefinedParameterDictionary]::new()
+            $attributeCollection = [Collection[Attribute]]::new()
 
             $projectNameParameterAttribute = [ParameterAttribute]@{
                 Mandatory = $true
@@ -21,43 +21,53 @@ function Invoke-PSMake {
             }
 
             $attributeCollection.Add($projectNameParameterAttribute)
-            $projectNameParam = [System.Management.Automation.RuntimeDefinedParameter]::new('ProjectName', [string], $attributeCollection)
+            $projectNameParam = [RuntimeDefinedParameter]::new('ProjectName', [string], $attributeCollection)
             $paramDictionary.Add("ProjectName", $projectNameParam)
             return $paramDictionary
         }
 
         if ($Command -eq 'publish') {
-            $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
-            $attributeCollection = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+            $paramDictionary = [RuntimeDefinedParameterDictionary]::new()
+            $attributeCollection = [Collection[Attribute]]::new()
             $nugetApiKeyAttribute = [ParameterAttribute]@{
                 Position = 2
             }
             $attributeCollection.Add($nugetApiKeyAttribute)
-            $nugetApiKeyParam = [System.Management.Automation.RuntimeDefinedParameter]::new('NuGetApiKey', [string], $attributeCollection)
+            $nugetApiKeyParam = [RuntimeDefinedParameter]::new('NuGetApiKey', [string], $attributeCollection)
             $paramDictionary.Add("NuGetApiKey", $nugetApiKeyParam)
+
+            $buildTargetAttributeCollection = [Collection[Attribute]]::new()
+            $buildTargetParameterAttribute = [ParameterAttribute]@{
+                Position = 3
+            }
+            $buildTargetAttributeCollection.Add($buildTargetParameterAttribute)
+            $buildTargetParam = [RuntimeDefinedParameter]::new('BuildTarget', [string], $buildTargetAttributeCollection)
+            $buildTargetParam.Value = "Release"
+            $PSBoundParameters["BuildTarget"] = $buildTargetParam.Value
+            $paramDictionary.Add("BuildTarget", $buildTargetParam)
             return $paramDictionary
         }
 
         if ($Command -eq 'test') {
-            $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
-            $attributeCollection = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+            $paramDictionary = [RuntimeDefinedParameterDictionary]::new()
+            $attributeCollection = [Collection[Attribute]]::new()
             $reportsParameterAttribute = [ParameterAttribute]@{
                 Position = 2
             }
             $attributeCollection.Add($reportsParameterAttribute)
-            $reportsParam = [System.Management.Automation.RuntimeDefinedParameter]::new('ReportType', [string], $attributeCollection)
+            $reportsParam = [RuntimeDefinedParameter]::new('ReportType', [string], $attributeCollection)
             $paramDictionary.Add("ReportType", $reportsParam)
             return $paramDictionary
         }
 
         if ($Command -eq 'build') {
-            $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
-            $attributeCollection = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+            $paramDictionary = [RuntimeDefinedParameterDictionary]::new()
+            $attributeCollection = [Collection[Attribute]]::new()
             $buildTargetParameterAttribute = [ParameterAttribute]@{
                 Position = 2
             }
             $attributeCollection.Add($buildTargetParameterAttribute)
-            $buildTargetParam = [System.Management.Automation.RuntimeDefinedParameter]::new('BuildTarget', [string], $attributeCollection)
+            $buildTargetParam = [RuntimeDefinedParameter]::new('BuildTarget', [string], $attributeCollection)
             $buildTargetParam.Value = "Release"
             $PSBoundParameters["BuildTarget"] = $buildTargetParam.Value
             $paramDictionary.Add("BuildTarget", $buildTargetParam)
@@ -125,6 +135,7 @@ function Invoke-PSMake {
                 $buildArgs = @{
                     BuildFilePath = ".\build.psd1"
                 }
+
                 if($PSBoundParameters.ContainsKey("BuildTarget")) {
                     $buildArgs.Add("BuildTarget", $PSBoundParameters["BuildTarget"])
                 }

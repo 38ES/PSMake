@@ -1,10 +1,12 @@
 @{
     ModuleName = "PSMake"
     Credential = "~\.38Nexus_psrepo_credential.json"
-    DevRequiredModules = @{
-        ModuleName = "Pester"
-        ModuleVersion = "5.5.0"
-    }
+    DevRequiredModules = @(
+        @{
+            ModuleName = "Pester"
+            ModuleVersion = "5.5.0"
+        }
+    )
     Build = {
 
         CopyFiles {
@@ -58,7 +60,7 @@
         param(
             [string]$NuGetAPIKey
         )
-
+        Write-Verbose "Publish module at $($settings.OutputModulePath)"
         $args1 = @{
             Path = $settings.OutputModulePath
             Repository = if ($env:POWERSHELL_REPO_NAME) { $env:POWERSHELL_REPO_NAME } else { '38Nexus' }
@@ -73,7 +75,7 @@
             $args1.Add("Credential", $settings.Credential)
         }
 
-        #Publish-Module @args1
+        Publish-Module @args1
     }
 
     Test = {
