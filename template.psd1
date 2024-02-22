@@ -45,7 +45,12 @@
     #     RequiredVersion = specific version
     #     ModuleVersion = specific version or higher
     #}
-    #DevRequiredModules = ''
+    DevRequiredModules = @(
+        @{
+            ModuleName = "Pester"
+            ModuleVersion = "5.5.0"
+        }
+    )
 
     ##
     # REQUIRED - Script to build the module
@@ -77,12 +82,18 @@
                 Get-ChildItem .\functions -Recurse -File
             }
 
+            Prerelease {
+                SetPrereleaseTag {
+                    '%%MODULENAME%%.psd1'
+                }
+            }
+
             CodeSign {
                 '%%MODULENAME%%.psd1'
                 '%%MODULENAME%%.psm1'
             }
 
-        }
+        } -AndPrerelease
     }
 
     ##
@@ -104,14 +115,19 @@
 
         $args1 = @{
             Path = $settings.OutputModulePath
-            Repository = '38Nexus'
+            Repository = if ($env:POWERSHELL_REPO_NAME) { $env:POWERSHELL_REPO_NAME } else { '38Nexus' }
         }
 
         if($PSBoundParameters.ContainsKey('NuGetApiKey')) {
             $args1.Add('NuGetApiKey', $NuGetAPIKey)
         }
 
-        import-module PowerShellGet -RequiredVersion 2.2.5
+        if ($settings.Credential -is [pscredential])
+        {
+            Write-Verbose "Adding provided credential - user: $($settings.Credential.UserName)"
+            $args1.Add("Credential", $settings.Credential)
+        }
+
         Publish-Module @args1
     }
 
@@ -125,7 +141,14 @@
             [string]$Target
         )
 
-        Invoke-Pester -Configuration (Import-CliXml .\Pester5Configuration.xml)
+        if($PSBoundParameters.ContainsKey("ReportType") -and ($ReportType -eq "cicd" -or $ReportType -eq 'reports')) {
+            Write-Verbose 'Running Pester tests for CI/CD pipeline'
+            Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-cicd.psd1)
+        }
+        else {
+            Write-Verbose 'Rnning Pester tests for local system'
+            Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-local.psd1)
+        }
     }
 
 }
