@@ -13,6 +13,8 @@
             'PSMake.psd1'
             'defaultsettings.psd1'
             'template.psd1'
+            'Pester5Configuration-cicd.psd1'
+            'Pester5Configuration-local.psd1'
         }
 
         Prerelease {
