@@ -68,18 +68,140 @@ The ```build.psd1``` file is a PowerShell hashtable with expected keys. Some key
 The workflow keys are ```Build```, ```Clean```, ```Test```, and ```Publish``` with each assigned to a scriptblock (```{}```) literal. This scriptblock is called in the scope of the PSMake module giving access to the special commands that express the build intent.
 
 #### Special Commands
-| Command | Description | Example |
-| :------ | :---------- | :------ |
-| AddType | Adds a C# file using Add-Type to the psm1 file  | <code>AddType {<br>&nbsp; 'classes/MyClass.cs'<br>}</code> |
-| CodeSign | Code signs the returns files from the given scriptblock | <code>CodeSign {<br>&nbsp; 'file1'<br>&nbsp; 'file2'<br>}<br></code> |
-| Collate | Brings multiple function ps1 files into a single psm1 file | <code>Collate {<br>&nbsp; './functions/file1.ps1'<br>&nbsp; './functions/file2.ps1'<br>}</code> |
-| CopyDirectory | Copies directories into the distribution folder | <code>CopyDirectory {<br>&nbsp; './functions'<br>}</code> |
-| CopyFiles | Copies files into the distribution folder | <code>CopyFiles {<br>&nbsp; 'manifest.psd1'<br>}</code> |
-| CreateDirectory | Creates a directory into the distribution folder | <code>CreateDirectory {<br>&nbsp; 'MyFolder'<br>}</code> |
-| CustomCode | Adds codes to the generated psm1 file in the distribution folder | <code>CustomCode {<br>&nbsp; # Add custom code here<br>}</code> |
-| Debug | Only runs the given scriptblock when the build target is Debug | <code>Debug {<br>&nbsp; CopyFiles {<br>&nbsp; &nbsp; 'module.psm1'<br>&nbsp;}<br>}</code> |
-| Release | Only runs the given scriptblock when the build target is Release | <code>Release {<br>&nbsp; Collate {<br>&nbsp; &nbsp; Get-ChildItem ./functions/*.ps1<br>&nbsp;}<br>}</code> |
-| UsingModule | Adds a ```using module``` command to the generated psm1 file | <code>UsingModule {<br>&nbsp; 'MySpecialModule'<br>}</code> |
+
+<table>
+<tr>
+<td>Command</td>
+<td>Description</td>
+<td>Example</td>
+</tr>
+<tr>
+<td>AddType</td>
+<td>Adds a C# file using Add-Type to the psm1 file</td>
+<td>
+
+```pwsh
+AddType {
+    'classes/MyClass.cs'
+}
+```
+</td>
+</tr>
+<tr>
+<td>CodeSign</td>
+<td>Code signs the returns files from the given scriptblock</td>
+<td>
+
+```pwsh
+CodeSign {
+    'file1'
+    'file2'
+}
+```
+</td>
+</tr>
+<tr>
+<td>Collate</td>
+<td>Brings multiple function ps1 files into a single psm1 file</td>
+<td>
+
+```pwsh
+Collate {
+    './functions/file1.ps1'
+    './functions/file2.ps1'
+}
+```
+</td>
+</tr>
+<tr>
+<td>CopyDirectory</td>
+<td>Copies directories into the distribution folder</td>
+<td>
+
+```pwsh
+CopyDirectory {
+    './functions'
+}
+```
+</td>
+</tr>
+<tr>
+<td>CopyFiles</td>
+<td>Copies files into the distribution folder</td>
+<td>
+
+```pwsh
+CopyFiles {
+    'manifest.psd1'
+}
+```
+</td>
+</tr>
+<tr>
+<td>CreateDirectory</td>
+<td>Creates a directory in the distribution folder</td>
+<td>
+
+```pwsh
+CreateDirectory {
+    'MyFolder'
+}
+```
+</td>
+</tr>
+<tr>
+<td>CustomCode</td>
+<td>Adds codes to the generated psm1 file in the distribution folder</td>
+<td>
+
+```pwsh
+CustomCode {
+    # Add custom code here
+}
+```
+</td>
+</tr>
+<tr>
+<td>Debug</td>
+<td>Only runs the given scriptblock when the build target is Debug</td>
+<td>
+
+```pwsh
+Debug {
+    CopyFiles {
+        'module.psm1'
+    }
+}
+```
+</td>
+</tr>
+<tr>
+<td>Release</td>
+<td>Only runs the given scriptblock when the build target is Release</td>
+<td>
+
+```pwsh
+Release {
+    Collate {
+        Get-ChildItem ./functions/*.ps1
+    }
+}
+```
+</td>
+</tr>
+<tr>
+<td>UsingModule</td>
+<td>Adds a <code>using module</code> command to the generated psm1 file</td>
+<td>
+
+```pwsh
+UsingModule {
+    'MySpecialModule'
+}
+```
+</td>
+</tr>
+</table>
 
 ### Contributing
 PSMake is open to community contributions! Please put issues in the project's issues area. If you'd like to submit a Merge/Pull request, please fork the project, make the changes, and then create a Merge request from your fork's branch. A ```CONTRIBUTING.md``` file will be made in the future.
