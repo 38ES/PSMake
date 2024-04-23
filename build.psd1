@@ -1,6 +1,6 @@
 @{
     ModuleName = "PSMake"
-    Credential = "~\.38Nexus_psrepo_credential.json"
+    Credential = $null
     DevRequiredModules = @(
         @{
             ModuleName = "Pester"
