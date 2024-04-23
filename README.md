@@ -177,7 +177,7 @@ Debug {
 </tr>
 <tr>
 <td>Release</td>
-<td>Only runs the given scriptblock when the build target is Release</td>
+<td>Only runs the given scriptblock when the build target is Release. Also provides a <code>-AndPrerelease</code> switch to run for release AND prerelease targets</td>
 <td>
 
 ```pwsh
@@ -185,6 +185,33 @@ Release {
     Collate {
         Get-ChildItem ./functions/*.ps1
     }
+} -AndPrerelease
+```
+
+</td>
+</tr>
+<tr>
+<td>Prerelease</td>
+<td>Only runs the given scripblock when the build target is Prerelease</td>
+<td>
+
+```pwsh
+Prerelease {
+    SetPrereleaseTag {
+        'MyModuleManifest.psd1'
+    }
+}
+```
+</td>
+</tr>
+<tr>
+<td>SetPrereleaseTag</td>
+<td>Sets the Prerelease property within a manifest file to mark the module as a prerelease within PSResourceGet or PowerShellGet</td>
+<td>
+
+```pwsh
+SetPrereleaseTag {
+    'MyModuleManifest.psd1'
 }
 ```
 </td>
