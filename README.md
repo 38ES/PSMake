@@ -2,8 +2,6 @@
 ## PowerShell Project Management and Lifecycle
 PSMake is an all-in-one project management and lifecycle toolset for PowerShell.
 
-[[_TOC_]]
-
 ### Traditional PowerShell Module Development Problems
 1. Only a Manifest (psd1) and module file (psm1) with all logic in one file
 2. No seperation of development and production - *Unit Tests distributed to users?* 😬
