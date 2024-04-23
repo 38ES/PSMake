@@ -66,7 +66,7 @@
         Write-Verbose "Publish module at $($settings.OutputModulePath)"
         $args1 = @{
             Path = $settings.OutputModulePath
-            Repository = if ($env:POWERSHELL_REPO_NAME) { $env:POWERSHELL_REPO_NAME } else { '38Nexus' }
+            Repository = if ($env:POWERSHELL_REPO_NAME) { $env:POWERSHELL_REPO_NAME } else { 'PSGallery' }
         }
 
         if($PSBoundParameters.ContainsKey('NuGetApiKey')) {
