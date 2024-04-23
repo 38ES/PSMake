@@ -91,7 +91,7 @@
             Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-cicd.psd1)
         }
         else {
-            Write-Verbose 'Rnning Pester tests for local system'
+            Write-Verbose 'Running Pester tests for local system'
             Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-local.psd1)
         }
     }
