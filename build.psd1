@@ -16,6 +16,7 @@
             'Pester5Configuration-cicd.psd1'
             'Pester5Configuration-local.psd1'
             'LICENSE'
+            'NOTICE'
         }
 
         Prerelease {
