@@ -1,7 +1,6 @@
-name: CI
+name: CI Tests
 on:
-    push:
-        branches: ["main", "github-transition"]
+    pull_request:
 
 jobs:
     deploy:
@@ -10,23 +9,32 @@ jobs:
         steps:
             - name: Check out repository code
               uses: actions/checkout@v4
-            - name: Get current directory
-              shell: pwsh
-              run: Get-ChildItem
-            - name: Output environment
-              shell: pwsh
-              run: Get-ChildItem Env:\
-            - name: Change to working directory
-              shell: pwsh
-              run: cd $env:WORKSPACE; Get-ChildItem
+
             - name: Install dependencies
               shell: pwsh
-              run: Install-Module Configuration -Force
+              run: |
+                Install-Module Configuration -Force
+                Install-Module PSScriptAnalyzer -Force
+
             - name: Run Tests
               shell: pwsh
               run: |
                 Import-Module ./PSMake.psd1 -ErrorAction Stop
-                psmake test
+                psmake test reports
+
+            - name: JUnit Report Action
+              uses: mikepenz/action-junit-report@v4
+              if: success() || failure()
+              with:
+                report_paths: ./PesterTestsReport.xml
+
+            - name: JaCoCo Report
+              uses: Madrapps/jacoco-report@v1.6.1
+              if: success() || failure()
+              with:
+                token: ${{github.token}}
+                paths: ${{github.workspace}}/CodeCoverageReport.xml
+             
 
             
         
