@@ -15,4 +15,6 @@ runs:
   steps:
     - name: Build PSMake
       shell: pwsh
-      run: PSMake publish ${{github.inputs.nuget-api-key}} ${{github.inputs.build-target}}
+      run: |
+        Import-Module ./PSMake.psd1
+        PSMake publish ${{github.inputs.nuget-api-key}} ${{github.inputs.build-target}}
