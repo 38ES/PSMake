@@ -235,4 +235,4 @@ UsingModule {
 </table>
 
 ### Contributing
-PSMake is open to community contributions! Please put issues in the project's issues area. If you'd like to submit a Merge/Pull request, please fork the project, make the changes, and then create a Merge request from your fork's branch. A ```CONTRIBUTING.md``` file will be made in the future.
+PSMake is open to community contributions! Please read the [CONTRIBUTING.md](./CONTRIBUTING.md) file for details on how to contribute!
