@@ -11,6 +11,11 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
+      - name: Install DotNet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
       - name: Install dependencies
         uses: ./.github/actions/install-dependencies
 
