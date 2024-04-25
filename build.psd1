@@ -1,6 +1,6 @@
 @{
     ModuleName = "PSMake"
-    Credential = "~\.38Nexus_psrepo_credential.json"
+    Credential = $null
     DevRequiredModules = @(
         @{
             ModuleName = "Pester"
@@ -15,6 +15,8 @@
             'template.psd1'
             'Pester5Configuration-cicd.psd1'
             'Pester5Configuration-local.psd1'
+            'LICENSE'
+            'NOTICE'
         }
 
         Prerelease {
@@ -65,7 +67,7 @@
         Write-Verbose "Publish module at $($settings.OutputModulePath)"
         $args1 = @{
             Path = $settings.OutputModulePath
-            Repository = if ($env:POWERSHELL_REPO_NAME) { $env:POWERSHELL_REPO_NAME } else { '38Nexus' }
+            Repository = if ($env:POWERSHELL_REPO_NAME) { $env:POWERSHELL_REPO_NAME } else { 'PSGallery' }
         }
 
         if($PSBoundParameters.ContainsKey('NuGetApiKey')) {
@@ -90,7 +92,7 @@
             Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-cicd.psd1)
         }
         else {
-            Write-Verbose 'Rnning Pester tests for local system'
+            Write-Verbose 'Running Pester tests for local system'
             Invoke-Pester -Configuration (Import-PowerShellDataFile .\Pester5Configuration-local.psd1)
         }
     }

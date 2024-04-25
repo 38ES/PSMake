@@ -1,0 +1,15 @@
+name: Build PSMake
+description: Builds PSMake
+
+inputs:
+  build-target:
+    required: true
+    default: Release
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Build PSMake
+      shell: pwsh
+      run: PSMake build ${{github.inputs.build-target}}

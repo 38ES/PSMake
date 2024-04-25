@@ -1,0 +1,10 @@
+name: Install Dependencies
+description: Installs required dependencies
+runs:
+  using: composite
+  steps:
+    - name: Install Dependencies
+      shell: pwsh
+      run: |
+        Install-Module Configuration -Force
+        Install-Module PSScriptAnalyzer -Force

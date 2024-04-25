@@ -1,0 +1,32 @@
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/powershell
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      uses: ./.github/actions/install-dependencies
+
+    - name: Run Tests
+      uses: ./.github/actions/unit-test
+
+    - name: Test Reports
+      uses: ./.github/actions/unit-test-reports
+
+    - name: Build Project (Release)
+      uses: ./.github/actions/build
+      with:
+        build-target: Release
+
+    - name: Publish Project (Release)
+      uses: ./.github/actions/publish
+      with:
+        build-target: Release
+        nuget-api-key: ${{secrets.PSGALLERY_API_KEY}}
