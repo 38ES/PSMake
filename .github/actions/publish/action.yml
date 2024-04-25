@@ -1,0 +1,18 @@
+name: Publish PSMake
+description: Builds PSMake
+
+inputs:
+  nuget-api-key:
+    required: true
+    type: string
+  build-target:
+    required: true
+    default: Release
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Build PSMake
+      shell: pwsh
+      run: PSMake publish ${{github.inputs.nuget-api-key}} ${{github.inputs.build-target}}
