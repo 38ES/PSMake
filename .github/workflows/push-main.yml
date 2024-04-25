@@ -11,6 +11,9 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
+      - name: Install curl
+        run: apt update && apt install -y curl
+    
       - name: Install DotNet
         uses: actions/setup-dotnet@v4
         with:

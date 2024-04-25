@@ -13,6 +13,7 @@ inputs:
 runs:
   using: composite
   steps:
+
     - name: Build PSMake
       shell: pwsh
       run: |
