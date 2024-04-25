@@ -1,0 +1,20 @@
+name: Unit Test Reports
+on:
+    pull_request:
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        container: mcr.microsoft.com/powershell
+        steps:
+            - name: Check out repository code
+              uses: actions/checkout@v4
+
+            - name: Install dependencies
+              uses: ./.github/workflows/install-dependencies.yml
+
+            - name: Run Tests
+              uses: ./.github/workflows/unit-tests.yml
+
+            - name: Test Reports
+              uses: ./.github/workflows/test-reports.yml

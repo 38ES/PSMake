@@ -1,27 +1,12 @@
-name: CI Tests
+name: Unit Test Reports
 on:
-    pull_request:
+    workflow_call:
 
 jobs:
-    deploy:
+    test:
         runs-on: ubuntu-latest
         container: mcr.microsoft.com/powershell
         steps:
-            - name: Check out repository code
-              uses: actions/checkout@v4
-
-            - name: Install dependencies
-              shell: pwsh
-              run: |
-                Install-Module Configuration -Force
-                Install-Module PSScriptAnalyzer -Force
-
-            - name: Run Tests
-              shell: pwsh
-              run: |
-                Import-Module ./PSMake.psd1 -ErrorAction Stop
-                psmake test reports
-
             - name: JUnit Report Action
               uses: mikepenz/action-junit-report@v4
               if: success() || failure()
