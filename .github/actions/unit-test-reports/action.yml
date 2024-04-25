@@ -1,0 +1,16 @@
+name: Unit Test Reports
+description: Performs unit testing reports
+runs:
+  using: composite
+  steps:
+    - name: JUnit Report Action
+      uses: mikepenz/action-junit-report@v4
+      if: success() || failure()
+      with:
+        report_paths: ./PesterTestsReport.xml
+    - name: JaCoCo Report
+      uses: Madrapps/jacoco-report@v1.6.1
+      if: success() || failure()
+      with:
+        token: ${{github.token}}
+        paths: ${{github.workspace}}/CodeCoverageReport.xml

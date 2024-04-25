@@ -1,0 +1,10 @@
+name: Unit Test
+description: Performs unit testing
+runs:
+  using: composite
+  steps:
+    - name: Run Tests
+      shell: pwsh
+      run: |
+        Import-Module ./PSMake.psd1 -ErrorAction Stop
+        psmake test reports
