@@ -100,7 +100,7 @@ PrivateData = @{
         Prerelease = ''
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @("ProjectManagement", "Build", "Test", "Publish", "Dependency", "Standards")
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/38ES/PSMake/blob/main/LICENSE'
