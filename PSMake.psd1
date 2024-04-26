@@ -109,7 +109,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/38ES/PSMake/'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://imgur.com/a/SMseeg0'
+        IconUri = 'https://raw.githubusercontent.com/38ES/PSMake/main/meta/psmake-logo.png'
 
         # ReleaseNotes of this module
         ReleaseNotes = 'First initial release of PSMake as OSS'
