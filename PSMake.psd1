@@ -103,16 +103,16 @@ PrivateData = @{
         # Tags = @()
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/38ES/PSMake/blob/main/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/38ES/PSMake/'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://imgur.com/a/SMseeg0'
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = 'First initial release of PSMake as OSS'
 
         # ExternalModuleDependencies = ''
 
