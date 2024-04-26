@@ -1,5 +1,7 @@
 # PSMake
 ## PowerShell Project Management and Lifecycle
+<img src="./meta/psmake-logo.png" width="500">
+
 PSMake is an all-in-one project management and lifecycle toolset for PowerShell.
 
 ### ❗NOTICE ❗
