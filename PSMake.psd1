@@ -12,7 +12,7 @@
 RootModule = '.\PSMake.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.2'
+ModuleVersion = '2.0.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -21,16 +21,16 @@ ModuleVersion = '2.0.2'
 GUID = '12bd3003-13bd-4321-b3f8-9c713ca1528e'
 
 # Author of this module
-Author = 'Keith Jackson'
+Author = '38ES'
 
 # Company or vendor of this module
-CompanyName = 'USAF, 38 CEIG/ES'
+CompanyName = 'USAF'
 
 # Copyright statement for this module
-Copyright = 'GOTS'
+Copyright = 'SEE NOTICE'
 
 # Description of the functionality provided by this module
-Description = 'Used to build powershell modules for distribution'
+Description = 'PSMake is an all-in-one project management and lifecycle toolset for PowerShell.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -114,7 +114,7 @@ PrivateData = @{
         # ReleaseNotes of this module
         # ReleaseNotes = ''
 
-        ExternalModuleDependencies = @("PowerShellGet")
+        # ExternalModuleDependencies = ''
 
     } # End of PSData hashtable
 
