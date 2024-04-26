@@ -18,4 +18,4 @@ runs:
       shell: pwsh
       run: |
         Import-Module ./PSMake.psd1
-        PSMake publish ${{github.inputs.nuget-api-key}} ${{github.inputs.build-target}}
+        PSMake publish ${{inputs.nuget-api-key}} ${{inputs.build-target}}

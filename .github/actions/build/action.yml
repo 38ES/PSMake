@@ -14,4 +14,4 @@ runs:
       shell: pwsh
       run: |
         Import-Module ./PSMake.psd1 -Force
-        PSMake build ${{github.inputs.build-target}}
+        PSMake build ${{inputs.build-target}}
