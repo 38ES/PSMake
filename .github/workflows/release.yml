@@ -1,10 +1,9 @@
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [prereleased, released]
 
 jobs:
-  publish-release:
+  release:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/powershell
     steps:
@@ -27,6 +26,13 @@ jobs:
 
     - name: Test Reports
       uses: ./.github/actions/unit-test-reports
+
+    - name: Set Release Information
+      uses: ./github/actions/set-release
+      with:
+        tag-name: ${{ github.event.release.tag_name }}
+        prerelease: ${{ github.event.release.prerelease }}
+        body: ${{ github.event.release.body }}
 
     - name: Build Project (Release)
       uses: ./.github/actions/build

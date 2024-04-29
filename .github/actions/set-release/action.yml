@@ -1,0 +1,44 @@
+name: Set Release
+description: Sets release/prerelease information for PSMake
+
+inputs:
+  tag-name:
+    required: true
+    type: string
+  prerelease:
+    required: false
+    default: false
+    type: boolean
+  body:
+    required: true
+    default: ''
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Set Release Information In Manifest
+      shell: pwsh
+      run: |
+        $tagName = '${{ inputs.tag_name }}'
+        $prerelease = [bool]::Parse('${{ inputs.prerelease }}')
+        $body = @'
+        ${{ inputs.body }}
+        '@
+        [Version]$version, $prereleaseText = [regex]::Match($tagName, '(\d+\.){2}\d+(-[\w|\d]+)?').Value -split '-'
+        $prereleaseText = if ($null -eq $prereleaseText) {
+          if ($prerelease) {
+            "rc$(Get-Date -Format yyyyMMddHHmmss -AsUtc)"
+          }
+          else {
+            ''
+          }
+        }
+        else {
+          $prereleaseText
+        }
+        
+        Import-Module Configuration
+        Update-Metadata -Path .\PSMake.psd1 -PropertyName 'ModuleVersion' -Value $version
+        Update-Metadata -Path .\PSMake.psd1 -PropertyName 'PrivateData.PSData.ReleaseNotes' -Value $body
+        Update-Metadata -Path .\PSMake.psd1 -PropertyName 'PrivateData.PSData.Prerelease' -Value $prereleaseText

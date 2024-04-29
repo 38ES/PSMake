@@ -1,15 +1,25 @@
-name: Unit Test Reports
 on:
-    pull_request:
-      types: [opened, synchronize]
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
-  pull-request-opened-synchronized:
+  test-main-or-pr:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/powershell
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+
+      - name: Install curl
+        run: apt update && apt install -y curl
+    
+      - name: Install DotNet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
 
       - name: Install dependencies
         uses: ./.github/actions/install-dependencies
@@ -19,4 +29,3 @@ jobs:
 
       - name: Test Reports
         uses: ./.github/actions/unit-test-reports
-          
